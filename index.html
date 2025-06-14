@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>TruthVerify – Verified News Dashboard</title>
+  <script>
+    function filterTable() {
+      let input = document.getElementById('searchInput').value.toLowerCase();
+      let rows = document.querySelectorAll('table tbody tr');
+      rows.forEach(row => {
+        let text = row.textContent.toLowerCase();
+        row.style.display = text.includes(input) ? '' : 'none';
+      });
+    }
+  </script>
+</head>
+<body style="font-family:sans-serif;padding:40px;background:#f9f9f9;">
+  <h1>✅ TruthVerify Dashboard</h1>
+  <input id="searchInput" onkeyup="filterTable()" placeholder="Search username, date or badge ID..." style="padding:10px;width:100%;margin-bottom:20px;"/>
+
+  <table border="1" cellpadding="10" cellspacing="0" style="width:100%;background:#fff;">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Status</th>
+        <th>Date</th>
+        <th>Badge ID</th>
+        <th>View</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td>Kung</td>
+        <td>✅ True</td>
+        <td>2025-06-11</td>
+        <td>61641ea3</td>
+        <td><a href="static_pages/verify_61641ea3.html" target="_blank">🔍 View</a></td>
+      </tr>
+    
+      <tr>
+        <td>Katie</td>
+        <td>✅ True</td>
+        <td>2025-06-13</td>
+        <td>04d2f0f8</td>
+        <td><a href="static_pages/verify_04d2f0f8.html" target="_blank">🔍 View</a></td>
+      </tr>
+    
+    </tbody>
+  </table>
+</body>
+</html>
