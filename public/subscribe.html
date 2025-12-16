@@ -1,0 +1,19 @@
+<!doctype html>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Subscribe • TruthVerify</title>
+<div style="font-family:-apple-system,system-ui;max-width:720px;margin:24px">
+  <h1>Subscribe to TruthVerify</h1>
+  <p>Badge Basic -- $4.99 / month</p>
+  <div id="paypal-btn"></div>
+</div>
+
+<script src="https://www.paypal.com/sdk/js?client-id=AeDBsUrRHn5auPOyglDm5UZqyGlL1LQ3jnTd-Vm_xquF_jatrrAo6GcXK5k7HJpLq22tZfFgDE6_r8xi&vault=true&intent=subscription"></script>
+<script>
+paypal.Buttons({
+  style:{shape:'rect',color:'gold',layout:'vertical',label:'subscribe'},
+  createSubscription: (data, actions) => actions.subscription.create({
+    plan_id: 'P-7FJ14486TX267325SNFAF7JI'
+  }),
+  onApprove: (data) => alert('Thanks! Subscription ID: ' + data.subscriptionID)
+}).render('#paypal-btn');
+</script>
