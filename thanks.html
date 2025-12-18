@@ -1,0 +1,21 @@
+<!doctype html>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Thank you • TruthVerify</title>
+<style>
+  body{font-family:-apple-system,system-ui;margin:24px;max-width:720px}
+  .card{border:1px solid #e5e7eb;border-radius:12px;padding:20px}
+  .id{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-all}
+  a.btn{display:inline-block;margin-top:16px;padding:10px 14px;border-radius:10px;
+        background:#111;color:#fff;text-decoration:none}
+</style>
+<div class="card">
+  <h1>✅ Thank you for subscribing!</h1>
+  <p>Your TruthVerify subscription is active.</p>
+  <p><strong>Subscription ID:</strong> <span id="sid" class="id">…</span></p>
+  <a class="btn" href="./subscribe.html">Back to Subscribe</a>
+</div>
+<script>
+  // show ?sid=... passed from PayPal approval
+  const p = new URLSearchParams(location.search);
+  document.getElementById('sid').textContent = p.get('sid') || 'N/A';
+</script>
