@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>TruthVerify — Verification</title>
+  <meta name="description" content="TruthVerify verification: integrity signals, evidence, and status for a creator or content." />
+  <style>
+    :root{
+      --bg: #070A10;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.04);
+      --border: rgba(255,255,255,.10);
+      --text: rgba(255,255,255,.90);
+      --muted: rgba(255,255,255,.68);
+      --faint: rgba(255,255,255,.50);
+      --shadow: 0 16px 60px rgba(0,0,0,.55);
+
+      --brand: #B6F7D0;      /* calm mint */
+      --brand2: #A8B8FF;     /* soft periwinkle */
+      --warn: #FFD36A;
+      --bad: #FF6B7A;
+      --ok: #7CFFB6;
+
+      --radius: 18px;
+      --radius2: 12px;
+      --max: 1080px;
+      --pad: 22px;
+      --pad2: 16px;
+
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{ box-sizing: border-box; }
+    html, body{ height:100%; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(168,184,255,.14), transparent 60%),
+        radial-gradient(900px 600px at 80% 0%, rgba(182,247,208,.10), transparent 55%),
+        radial-gradient(900px 700px at 50% 110%, rgba(255,211,106,.05), transparent 60%),
+        var(--bg);
+      line-height: 1.45;
+      letter-spacing: .1px;
+    }
+
+    a{ color: inherit; }
+    .wrap{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 26px 18px 60px;
+    }
+
+    /* Top bar */
+    .top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      min-width: 220px;
+    }
+    .mark{
+      width: 36px; height: 36px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background:
+        radial-gradient(12px 12px at 30% 30%, rgba(182,247,208,.95), transparent 60%),
+        radial-gradient(16px 16px at 70% 55%, rgba(168,184,255,.85), transparent 60%),
+        rgba(255,255,255,.04);
+      position: relative;
+      overflow:hidden;
+    }
+    .mark:after{
+      content:"";
+      position:absolute; inset:-40%;
+      background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,.14), transparent 65%);
+      transform: rotate(18deg);
+      animation: sheen 6s linear infinite;
+    }
+    @keyframes sheen{
+      0%{ transform: translateX(-20%) rotate(18deg); opacity:.0;}
+      10%{ opacity:.35;}
+      50%{ opacity:.25;}
+      100%{ transform: translateX(40%) rotate(18deg); opacity:.0;}
+    }
+
+    .brand h1{
+      font-size: 14px;
+      margin: 0;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+    .brand p{
+      margin: 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .top-actions{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content:flex-end;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      text-decoration:none;
+      font-size: 12.5px;
+      color: var(--text);
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+      user-select:none;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.16); }
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(182,247,208,.18), rgba(168,184,255,.14));
+      border-color: rgba(182,247,208,.28);
+    }
+    .btn .dot{
+      width: 8px; height: 8px; border-radius: 99px;
+      background: var(--brand);
+      box-shadow: 0 0 0 3px rgba(182,247,208,.12);
+    }
+
+    /* Hero */
+    .hero{
+      margin-top: 18px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position: relative;
+    }
+    .hero-inner{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 18px;
+      padding: 26px;
+    }
+    .hero h2{
+      margin: 0 0 8px;
+      font-size: 28px;
+      line-height: 1.12;
+      letter-spacing: -0.3px;
+    }
+    .hero .sub{
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 14.5px;
+      max-width: 62ch;
+    }
+
+    .pillrow{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.035);
+      font-size: 12.5px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .pill strong{ color: var(--text); font-weight: 700; }
+    .status-dot{
+      width: 10px; height: 10px; border-radius: 999px;
+      background: var(--ok);
+      box-shadow: 0 0 0 3px rgba(124,255,182,.10);
+    }
+    .status-dot.warn{ background: var(--warn); box-shadow: 0 0 0 3px rgba(255,211,106,.10); }
+    .status-dot.bad{ background: var(--bad); box-shadow: 0 0 0 3px rgba(255,107,122,.12); }
+
+    .card{
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(0,0,0,.18);
+      padding: 16px;
+    }
+    .miniTitle{
+      font-size: 12px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--faint);
+      margin: 0 0 10px;
+    }
+
+    .kv{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .kv .row{
+      display:flex;
+      justify-content:space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      font-size: 13px;
+    }
+    .kv .k{ color: var(--muted); }
+    .kv .v{ color: var(--text); font-weight: 600; }
+    .kv code{ font-family: var(--mono); font-size: 12px; color: rgba(255,255,255,.82); }
+
+    /* Sections */
+    .grid{
+      margin-top: 18px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .panel{
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      padding: 18px;
+      box-shadow: 0 10px 36px rgba(0,0,0,.35);
+    }
+    .panel h3{
+      margin: 0 0 8px;
+      font-size: 15.5px;
+      letter-spacing: .1px;
+    }
+    .panel p{
+      margin: 0;
+      color: var(--muted);
+      font-size: 13.5px;
+    }
+
+    .list{
+      margin: 12px 0 0;
+      padding: 0;
+      list-style: none;
+      display:grid;
+      gap: 10px;
+    }
+    .li{
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      border-radius: 14px;
+      padding: 12px 12px;
+      display:flex;
+      gap: 10px;
+      align-items:flex-start;
+    }
+    .icon{
+      width: 28px; height: 28px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      display:flex; align-items:center; justify-content:center;
+      flex: 0 0 auto;
+      color: rgba(255,255,255,.80);
+      font-weight: 800;
+      font-size: 12px;
+    }
+    .li b{ display:block; margin-bottom: 2px; font-size: 13.5px; }
+    .li span{ display:block; color: var(--muted); font-size: 13px; }
+
+    /* Evidence */
+    .evidence{
+      margin-top: 14px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      padding-top: 14px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .eRow{
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      border-radius: 14px;
+      padding: 12px;
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      align-items:center;
+      font-size: 13px;
+    }
+    .eLeft{
+      display:flex; flex-direction:column; gap: 2px;
+      min-width: 0;
+    }
+    .eLeft .title{ font-weight: 650; }
+    .eLeft .meta{ color: var(--muted); font-size: 12.5px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .tag{
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.03);
+      font-size: 12px;
+      color: rgba(255,255,255,.78);
+      white-space: nowrap;
+    }
+    .tag.ok{ border-color: rgba(124,255,182,.22); background: rgba(124,255,182,.06); }
+    .tag.warn{ border-color: rgba(255,211,106,.22); background: rgba(255,211,106,.06); }
+    .tag.bad{ border-color: rgba(255,107,122,.22); background: rgba(255,107,122,.07); }
+
+    /* FAQ */
+    details{
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      border-radius: 14px;
+      padding: 12px 12px;
+    }
+    details + details{ margin-top: 10px; }
+    summary{
+      cursor: pointer;
+      font-weight: 650;
+      color: rgba(255,255,255,.86);
+    }
+    details p{ margin: 8px 0 0; color: var(--muted); font-size: 13.5px; }
+
+    /* Footer */
+    footer{
+      margin-top: 18px;
+      color: var(--faint);
+      font-size: 12px;
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 0 6px;
+    }
+    footer a{ color: rgba(255,255,255,.68); text-decoration: none; border-bottom: 1px dotted rgba(255,255,255,.25); }
+    footer a:hover{ color: rgba(255,255,255,.84); }
+
+    /* Mobile */
+    @media (max-width: 900px){
+      .hero-inner{ grid-template-columns: 1fr; }
+      .grid{ grid-template-columns: 1fr; }
+      .top{ align-items:flex-start; }
+      .brand{ min-width: 0; }
+    }
+
+    /* Print / screenshots */
+    @media print{
+      body{ background: #000; }
+      .btn{ display:none; }
+    }
+
+    /* Accessibility */
+    .sr-only{
+      position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+      overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <!-- Top bar -->
+    <header class="top" role="banner" aria-label="TruthVerify verification header">
+      <div class="brand">
+        <div class="mark" aria-hidden="true"></div>
+        <div>
+          <h1>TruthVerify</h1>
+          <p>Verification page — calm, neutral, investor-friendly</p>
+        </div>
+      </div>
+
+      <nav class="top-actions" aria-label="Actions">
+        <a class="btn" href="/" title="Back to home">Home</a>
+        <a class="btn" href="/subscribe.html" title="Creator subscription">Creator</a>
+        <a class="btn primary" href="/v/example" title="See an example verification page">
+          <span class="dot" aria-hidden="true"></span>
+          View example
+        </a>
+      </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero" aria-label="Verification overview">
+      <div class="hero-inner">
+        <div>
+          <h2>Verification, without drama.</h2>
+          <p class="sub">
+            This page is where journalists, investors, and viewers land to see a clear verification snapshot:
+            who is verified, what was checked, and what evidence exists — without overselling.
+          </p>
+
+          <div class="pillrow" aria-label="Status pills">
+            <div class="pill">
+              <span class="status-dot" aria-hidden="true"></span>
+              <strong>Status:</strong>&nbsp;Verified
+            </div>
+            <div class="pill">
+              <strong>Scope:</strong>&nbsp;Creator identity + content integrity
+            </div>
+            <div class="pill">
+              <strong>Last updated:</strong>&nbsp;<span id="lastUpdated">2025-12-25</span>
+            </div>
+          </div>
+        </div>
+
+        <aside class="card" aria-label="Verification card">
+          <p class="miniTitle">Trust snapshot</p>
+
+          <div class="kv">
+            <div class="row">
+              <div class="k">Subject</div>
+              <div class="v">Creator</div>
+            </div>
+            <div class="row">
+              <div class="k">Handle</div>
+              <div class="v">@example_creator</div>
+            </div>
+            <div class="row">
+              <div class="k">Verification ID</div>
+              <div class="v"><code>TV-8F2A-19C7</code></div>
+            </div>
+            <div class="row">
+              <div class="k">Badge</div>
+              <div class="v">Integrity Badge (Active)</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Main grid -->
+    <section class="grid" aria-label="Trust proof sections">
+      <div class="panel">
+        <h3>What this verification means</h3>
+        <p>
+          TruthVerify is a structured signal — not a claim of perfection.
+          It indicates a repeatable process exists, checks were performed, and status can be reviewed over time.
+        </p>
+
+        <ul class="list" aria-label="Meaning list">
+          <li class="li">
+            <div class="icon" aria-hidden="true">ID</div>
+            <div>
+              <b>Identity signal</b>
+              <span>Evidence-backed checks to reduce impersonation risk (where applicable).</span>
+            </div>
+          </li>
+          <li class="li">
+            <div class="icon" aria-hidden="true">C</div>
+            <div>
+              <b>Content integrity signal</b>
+              <span>Basic link safety, source consistency, and manipulation flags (when supported).</span>
+            </div>
+          </li>
+          <li class="li">
+            <div class="icon" aria-hidden="true">H</div>
+            <div>
+              <b>History & transparency</b>
+              <span>Status changes can be logged (e.g., verified → review → revoked).</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <h3>Checks performed</h3>
+        <p>
+          Each “check” below is designed to be understandable to non-technical people.
+          (You can replace these with your real pipeline outputs later.)
+        </p>
+
+        <div class="evidence" aria-label="Evidence list">
+          <div class="eRow">
+            <div class="eLeft">
+              <div class="title">Creator consistency check</div>
+              <div class="meta">Handle, profile signals, and continuity markers</div>
+            </div>
+            <div class="tag ok">Pass</div>
+          </div>
+
+          <div class="eRow">
+            <div class="eLeft">
+              <div class="title">Link & redirect safety</div>
+              <div class="meta">Basic phishing / redirect / mismatch detection</div>
+            </div>
+            <div class="tag ok">Pass</div>
+          </div>
+
+          <div class="eRow">
+            <div class="eLeft">
+              <div class="title">Media manipulation screening</div>
+              <div class="meta">Heuristic flags (not a final forensic verdict)</div>
+            </div>
+            <div class="tag warn">Limited</div>
+          </div>
+
+          <div class="eRow">
+            <div class="eLeft">
+              <div class="title">Report trail</div>
+              <div class="meta">User reports + review outcomes (when present)</div>
+            </div>
+            <div class="tag ok">Active</div>
+          </div>
+        </div>
+
+        <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+          <a class="btn primary" href="/v/example">Open a clean example</a>
+          <a class="btn" href="/subscribe.html">Get verified (creator)</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="panel" style="margin-top:14px;" aria-label="FAQ">
+      <h3>FAQ</h3>
+
+      <details>
+        <summary>Is this a fact-checking label?</summary>
+        <p>
+          It’s closer to a verification and integrity signal: a standardized process + evidence trail.
+          For complex claims, TruthVerify can point to sources, context, and review history rather than “declaring truth.”
+        </p>
+      </details>
+
+      <details>
+        <summary>Can verification be revoked?</summary>
+        <p>
+          Yes. Status can change (e.g., Verified → Under Review → Revoked) if evidence shifts or policy violations occur.
+        </p>
+      </details>
+
+      <details>
+        <summary>How should journalists or investors use this page?</summary>
+        <p>
+          As a quick trust snapshot: status, scope, and what was checked — plus the presence of an audit trail.
+        </p>
+      </details>
+    </section>
+
+    <footer aria-label="Footer">
+      <div>© <span id="year"></span> TruthVerify</div>
+      <div>
+        <a href="/v/">/v/</a> ·
+        <a href="/v/example">example</a> ·
+        <a href="/subscribe.html">creator</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // tiny non-critical niceties
+    document.getElementById("year").textContent = new Date().getFullYear();
+    // If you want auto date:
+    // document.getElementById("lastUpdated").textContent = new Date().toISOString().slice(0,10);
+  </script>
+</body>
+</html>
