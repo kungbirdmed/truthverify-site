@@ -1,0 +1,25 @@
+{
+  "creator_id": "tv_00123",
+  "display_name": "GiftedReflection∞",
+  "platforms": {
+    "tiktok": "@giftedreflection8",
+    "instagram": "@giftedreflection8"
+  },
+  "verification": {
+    "method": "email+proof",
+    "status": "active",
+    "verified_at": "2025-10-30T21:44:00Z"
+  },
+  "badge": {
+    "badge_id": "TV-BADGE-9F3A",
+    "public_url": "https://truthverify.org/v/TV-BADGE-9F3A"
+  },
+  "content_hashes": [
+    {
+      "platform": "tiktok",
+      "content_url": "https://tiktok.com/...",
+      "sha256": "abc123...",
+      "timestamp": "2025-10-30T21:40:00Z"
+    }
+  ]
+}
