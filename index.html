@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>TruthVerify — Integrity badges for short-form video</title>
+  <meta name="description" content="TruthVerify provides verification pages and integrity badges for creators and content. View public verification records or request verification." />
+
+  <style>
+    :root{
+      --bg:#07080b;
+      --panel: rgba(255,255,255,.05);
+      --panel2: rgba(0,0,0,.22);
+      --border: rgba(255,255,255,.10);
+      --text: rgba(255,255,255,.90);
+      --muted: rgba(255,255,255,.62);
+      --muted2: rgba(255,255,255,.42);
+      --gold:#d7b85a;
+      --mint:#7CFFB6;
+      --bad:#ff6b6b;
+      --shadow: 0 12px 40px rgba(0,0,0,.45);
+      --radius: 18px;
+      --max: 1020px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% -10%, rgba(215,184,90,.12), transparent 60%),
+        radial-gradient(900px 600px at 80% 0%, rgba(255,255,255,.06), transparent 55%),
+        radial-gradient(900px 700px at 50% 110%, rgba(215,184,90,.08), transparent 60%),
+        var(--bg);
+      line-height: 1.45;
+      letter-spacing: .15px;
+    }
+
+    a{ color:inherit; text-decoration:none; }
+    a:hover{ text-decoration: underline; }
+
+    .wrap{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 28px 18px 60px;
+    }
+
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap: 12px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      min-width: 220px;
+    }
+    .mark{
+      width: 40px; height: 40px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background:
+        radial-gradient(14px 14px at 30% 30%, rgba(255,255,255,.16), transparent 60%),
+        radial-gradient(22px 22px at 70% 55%, rgba(215,184,90,.22), transparent 60%),
+        rgba(255,255,255,.04);
+      position: relative;
+      overflow:hidden;
+      box-shadow: 0 10px 26px rgba(0,0,0,.35);
+    }
+    .mark:after{
+      content:"";
+      position:absolute; inset:-40%;
+      background: linear-gradient(120deg, transparent 30%, rgba(215,184,90,.22), transparent 65%);
+      transform: rotate(18deg);
+      animation: sheen 7s linear infinite;
+    }
+    @keyframes sheen{
+      0%{ transform: translateX(-25%) rotate(18deg); opacity:.0;}
+      12%{ opacity:.35;}
+      55%{ opacity:.22;}
+      100%{ transform: translateX(45%) rotate(18deg); opacity:.0;}
+    }
+
+    .brand h1{
+      font-size: 14px;
+      margin: 0;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+    .brand p{
+      margin: 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .nav{
+      display:flex;
+      gap: 10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      text-decoration:none;
+      font-size: 12.5px;
+      color: var(--text);
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+      user-select:none;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.16); }
+    .btn.primary{
+      background: rgba(215,184,90,.12);
+      border-color: rgba(215,184,90,.30);
+    }
+    .btn .dot{
+      width: 8px; height: 8px; border-radius: 99px;
+      background: var(--gold);
+      box-shadow: 0 0 0 3px rgba(215,184,90,.12);
+    }
+
+    .hero{
+      margin-top: 18px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position: relative;
+      padding: 26px;
+    }
+    .hero h2{
+      margin: 0 0 10px;
+      font-size: 30px;
+      line-height: 1.15;
+      letter-spacing: -0.3px;
+    }
+    .hero .sub{
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 14.5px;
+      max-width: 70ch;
+    }
+
+    .ctaRow{
+      display:flex;
+      gap: 10px;
+      flex-wrap:wrap;
+      margin-top: 8px;
+    }
+    .cta{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      font-size: 13.5px;
+      color: var(--text);
+      min-width: 210px;
+      text-align:center;
+    }
+    .cta.primary{
+      background: linear-gradient(135deg, rgba(215,184,90,.18), rgba(255,255,255,.06));
+      border-color: rgba(215,184,90,.32);
+    }
+    .cta:hover{ background: rgba(255,255,255,.06); }
+
+    .pillrow{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.18);
+      font-size: 12.5px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .pill strong{ color: var(--text); font-weight: 700; }
+
+    .grid{
+      margin-top: 14px;
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+    .card{
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(0,0,0,.18);
+      padding: 16px;
+    }
+    .card h3{
+      margin:0 0 6px;
+      font-size: 14.5px;
+      letter-spacing: .1px;
+    }
+    .card p{
+      margin:0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .strip{
+      margin-top: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      background: rgba(0,0,0,.18);
+      padding: 14px 16px;
+      display:flex;
+      justify-content:space-between;
+      gap: 12px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .strip .left{
+      display:flex;
+      flex-direction:column;
+      gap: 4px;
+    }
+    .strip .left b{ font-size: 13.5px; }
+    .strip .left span{ color: var(--muted); font-size: 12.5px; }
+    .strip code{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: rgba(255,255,255,.78);
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.10);
+      padding: 6px 10px;
+      border-radius: 12px;
+      display:inline-block;
+    }
+
+    footer{
+      margin-top: 18px;
+      color: var(--muted2);
+      font-size: 12px;
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 0 6px;
+    }
+    footer a{ color: rgba(255,255,255,.70); }
+
+    @media (max-width: 900px){
+      .grid{ grid-template-columns: 1fr; }
+      .cta{ min-width: 0; flex: 1 1 auto; }
+      .top{ align-items:flex-start; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header class="top" role="banner" aria-label="TruthVerify header">
+      <div class="brand">
+        <div class="mark" aria-hidden="true"></div>
+        <div>
+          <h1>TruthVerify</h1>
+          <p>Integrity badges for short-form video</p>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Primary">
+        <a class="btn primary" href="./v/" title="Public verification dashboard">
+          <span class="dot" aria-hidden="true"></span>
+          View verifications
+        </a>
+        <a class="btn" href="./subscribe.html" title="Creator subscription / request verification">Creator access</a>
+      </nav>
+    </header>
+
+    <main class="hero" aria-label="Hero">
+      <h2>Verification, without drama.</h2>
+      <p class="sub">
+        TruthVerify provides a calm, public verification snapshot — who is verified, what was checked,
+        and where the record lives. Designed for creators, viewers, journalists, and investors.
+      </p>
+
+      <div class="ctaRow" aria-label="Calls to action">
+        <a class="cta primary" href="./v/">Open the /v dashboard →</a>
+        <a class="cta" href="./subscribe.html">Request verification (creator) →</a>
+      </div>
+
+      <div class="pillrow" aria-label="Pills">
+        <div class="pill"><strong>Public:</strong>&nbsp;/v records</div>
+        <div class="pill"><strong>Format:</strong>&nbsp;linkable verification pages</div>
+        <div class="pill"><strong>Tone:</strong>&nbsp;neutral, audit-friendly</div>
+      </div>
+    </main>
+
+    <section class="grid" aria-label="What it is">
+      <div class="card">
+        <h3>What TruthVerify is</h3>
+        <p>
+          A verification record system for creators and content — with a public dashboard and
+          shareable verification pages.
+        </p>
+      </div>
+      <div class="card">
+        <h3>What it is not</h3>
+        <p>
+          Not a hype label or a guarantee of truth. It’s a repeatable process + transparent status
+          that can change over time.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Why it matters</h3>
+        <p>
+          Short-form media moves fast. Viewers need a simple place to check legitimacy before they
+          trust, share, or pay.
+        </p>
+      </div>
+    </section>
+
+    <section class="strip" aria-label="Quick check">
+      <div class="left">
+        <b>Want to verify a badge right now?</b>
+        <span>Open the dashboard and search by handle or badge ID.</span>
+      </div>
+      <div>
+        <a class="btn" href="./v/">Go to /v</a>
+        <span style="margin-left:10px;"></span>
+        <code>truthverify-site/v/</code>
+      </div>
+    </section>
+
+    <footer aria-label="Footer">
+      <div>© <span id="year"></span> TruthVerify</div>
+      <div>
+        <a href="./v/">/v</a> ·
+        <a href="./subscribe.html">creator</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
