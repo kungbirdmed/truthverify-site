@@ -1,0 +1,16 @@
+{
+  "records": [
+    {
+      "id": "TV-2025-0001",
+      "creator_name": "TruthVerify Demo",
+      "handle": "@truthverify",
+      "platform": "tiktok",
+      "status": "verified",
+      "issued_at": "2025-12-26T00:00:00Z",
+      "expires_at": "2026-12-26T00:00:00Z",
+      "verified_url": "../subscribe.html",
+      "notes": "First live dashboard record.",
+      "hash": "demo"
+    }
+  ]
+}
