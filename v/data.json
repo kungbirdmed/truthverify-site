@@ -11,6 +11,18 @@
       "verified_url": "../subscribe.html",
       "notes": "First live dashboard record.",
       "hash": "demo"
+    },
+    {
+      "id": "TV-2025-0002",
+      "creator_name": "Creator Name",
+      "handle": "@creatorhandle",
+      "platform": "tiktok",
+      "status": "pending",
+      "issued_at": "2025-12-26T08:10:00Z",
+      "expires_at": null,
+      "verified_url": "../subscribe.html",
+      "notes": "Under review. Initial checks passed.",
+      "hash": "auto"
     }
   ]
 }
