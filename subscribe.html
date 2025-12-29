@@ -1,28 +1,59 @@
 <!doctype html>
-<a href="./" style="
-  position:fixed; top:14px; left:14px; z-index:9999;
-  padding:10px 12px; border-radius:999px;
-  border:1px solid rgba(255,255,255,.14);
-  background:rgba(0,0,0,.35);
-  color:rgba(255,255,255,.92);
-  text-decoration:none; font:600 13px system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-  backdrop-filter: blur(10px);
-">← Home</a>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Subscribe • TruthVerify</title>
-<div style="font-family:-apple-system,system-ui;max-width:720px;margin:24px">
-  <h1>Subscribe to TruthVerify</h1>
-  <p>Badge Basic -- $4.99 / month</p>
-  <div id="paypal-btn"></div>
-</div>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>Subscribe • TruthVerify</title>
+</head>
 
-<!-- Live PayPal SDK (public client-id is OK to embed) -->
-<script src="https://www.paypal.com/sdk/js?client-id=AeDBsUrRHn5auPOyglDm5UZqyGlL1LQ3jnTd-Vm_xquF_jatrrAo6GcXK5k7HJpLq22tZfFgDE6_r8xi&vault=true&intent=subscription"></script>
-<script>
-  paypal.Buttons({
-    style: { shape: 'rect', color: 'gold', layout: 'vertical', label: 'subscribe' },
-    createSubscription: (data, actions) =>
-      actions.subscription.create({ plan_id: 'P-7FJ14486TX267325SNFAF7JI' }),
-    onApprove: (data) => alert('Thanks! Subscription ID: ' + data.subscriptionID)
-  }).render('#paypal-btn');
-</script>
+<body style="margin:0; background:#07080b; color:rgba(255,255,255,.9); font-family:-apple-system,system-ui,Segoe UI,Roboto,Helvetica,Arial;">
+
+  <!-- Home button -->
+  <a href="./" style="
+    position:fixed; top:14px; left:14px; z-index:9999;
+    padding:10px 12px; border-radius:999px;
+    border:1px solid rgba(255,255,255,.14);
+    background:rgba(0,0,0,.35);
+    color:rgba(255,255,255,.92);
+    text-decoration:none; font:600 13px system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+    backdrop-filter: blur(10px);
+  ">← Home</a>
+
+  <!-- Page content -->
+  <div style="
+    max-width:720px;
+    margin:0 auto;
+    padding:72px 18px 40px;
+  ">
+    <h1 style="margin:0 0 8px; font-size:26px;">Subscribe to TruthVerify</h1>
+    <p style="margin:0 0 18px; color:rgba(255,255,255,.65);">
+      Badge Basic — $4.99 / month
+    </p>
+
+    <div id="paypal-btn"></div>
+
+    <p style="margin:18px 0 0; color:rgba(255,255,255,.55); font-size:12.5px;">
+      You will be redirected after approval (if configured). If you see a spinner, refresh once.
+    </p>
+  </div>
+
+  <!-- PayPal SDK (keep your existing client-id + plan_id) -->
+  <script src="https://www.paypal.com/sdk/js?client-id=AeDBsUrRHn5auPOyglDm5UZqyGlL1LQ3jnTd-Vm_xquF_jatrrAo6GcXK5k7HJpLq22tZfFgDE6_r8xi&vault=true&intent=subscription"></script>
+  <script>
+    paypal.Buttons({
+      createSubscription: (data, actions) => {
+        return actions.subscription.create({
+          plan_id: "P-7FJ14486TX267325SNFAF7JI"
+        });
+      },
+      onApprove: (data) => {
+        // Optional: redirect instead of alert
+        // window.location.href = "./thanks.html";
+        alert("Thanks! Subscription active.");
+      }
+    }).render("#paypal-btn");
+  </script>
+
+</body>
+</html>
