@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>TruthVerify — Pay</title>
+  <style>
+    body{margin:0;background:#07080b;color:rgba(255,255,255,.92);font-family:system-ui}
+    .wrap{max-width:820px;margin:0 auto;padding:28px 16px}
+    .card{border:1px solid rgba(255,255,255,.10);border-radius:18px;background:rgba(255,255,255,.04);padding:16px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:rgba(255,255,255,.92);text-decoration:none}
+    .btn.primary{border-color: rgba(215,184,90,.32); background: rgba(215,184,90,.12);}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;}
+    .muted{color:rgba(255,255,255,.65)}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h2 style="margin:0 0 6px;">Pay & unlock</h2>
+    <div class="muted">Request: <span class="mono" id="rid"></span></div>
+
+    <div id="locked" style="margin-top:12px; display:none;">
+      <p class="muted">This request is not Verified yet. Payment is locked.</p>
+      <a class="btn" id="backToStatus" href="#">Back to status</a>
+    </div>
+
+    <div id="unlocked" style="margin-top:12px; display:none;">
+      <p class="muted">Approved ✅ Pay to unlock badge assets (PNG/PDF/QR).</p>
+      <!-- MVP "Pay" button (swap to PayPal/Stripe later) -->
+      <a class="btn primary" id="payNow" href="#">Pay (MVP) →</a>
+      <div class="muted" style="font-size:12px;margin-top:8px;">(Replace this with your real PayPal button later.)</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const req = new URLSearchParams(location.search).get("req") || "";
+  document.getElementById("rid").textContent = req;
+
+  function loadRecord(){
+    try{
+      const arr = JSON.parse(localStorage.getItem("tv_requests") || "[]");
+      return arr.find(x => x.id === req) || null;
+    }catch(_){ return null; }
+  }
+
+  const rec = loadRecord();
+  const isVerified = rec && rec.status === "VERIFIED";
+
+  document.getElementById("backToStatus").href = `./status.html?req=${encodeURIComponent(req)}`;
+
+  if (!isVerified){
+    document.getElementById("locked").style.display = "block";
+  } else {
+    document.getElementById("unlocked").style.display = "block";
+    document.getElementById("payNow").href = `./unlock.html?req=${encodeURIComponent(req)}&token=paid`;
+  }
+</script>
+</body>
+</html>
