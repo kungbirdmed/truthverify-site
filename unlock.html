@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>TruthVerify — Downloads</title>
+  <style>
+    body{margin:0;background:#07080b;color:rgba(255,255,255,.92);font-family:system-ui}
+    .wrap{max-width:820px;margin:0 auto;padding:28px 16px}
+    .card{border:1px solid rgba(255,255,255,.10);border-radius:18px;background:rgba(255,255,255,.04);padding:16px}
+    a.btn{display:block;margin:10px 0;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:rgba(255,255,255,.92);text-decoration:none}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;}
+    .muted{color:rgba(255,255,255,.65)}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card" id="ok" style="display:none;">
+    <h2 style="margin:0 0 6px;">Badge assets unlocked ✅</h2>
+    <div class="muted">Request: <span class="mono" id="rid"></span></div>
+
+    <!-- Put your actual files in /assets/ -->
+    <a class="btn" href="./assets/badge.png" download>Download Badge (PNG)</a>
+    <a class="btn" href="./assets/certificate.pdf" download>Download Certificate (PDF)</a>
+    <a class="btn" href="./assets/qr.png" download>Download QR (PNG)</a>
+
+    <a class="btn" id="proof" href="#">View public proof (/v)</a>
+  </div>
+
+  <div class="card" id="nope" style="display:none;">
+    <h2 style="margin:0 0 6px;">Access denied</h2>
+    <p class="muted">This page requires a valid unlock token.</p>
+  </div>
+</div>
+
+<script>
+  const p = new URLSearchParams(location.search);
+  const req = p.get("req") || "";
+  const token = p.get("token") || "";
+  document.getElementById("rid").textContent = req;
+
+  if (token !== "paid"){
+    document.getElementById("nope").style.display = "block";
+  } else {
+    document.getElementById("ok").style.display = "block";
+    document.getElementById("proof").href = `./v/?id=${encodeURIComponent(req)}`;
+  }
+</script>
+</body>
+</html>
