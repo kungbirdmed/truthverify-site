@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>TruthVerify — Status</title>
+
+  <style>
+    :root{
+      --bg:#07080b; --border:rgba(255,255,255,.10);
+      --text:rgba(255,255,255,.92); --muted:rgba(255,255,255,.65);
+      --gold:#d7b85a; --good:#58d08a; --warn:#f7c35f; --bad:#ff6b6b;
+      --shadow:0 16px 60px rgba(0,0,0,.55); --radius:18px; --max:980px;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--sans); color:var(--text); line-height:1.45;
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(215,184,90,.10), transparent 60%),
+        radial-gradient(900px 600px at 80% 0%, rgba(88,208,138,.06), transparent 55%),
+        var(--bg);
+    }
+    .wrap{max-width:var(--max); margin:0 auto; padding:22px 16px 70px;}
+    .top{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:14px 16px; border:1px solid var(--border); border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow:var(--shadow); backdrop-filter: blur(10px);
+    }
+    .brand{display:flex; align-items:center; gap:10px;}
+    .mark{width:36px;height:36px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04)}
+    .brand h1{margin:0;font-size:14px;font-weight:850}
+    .brand p{margin:0;font-size:12px;color:var(--muted)}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding:10px 12px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.04);
+      text-decoration:none; font-size:12.5px; color:var(--text); user-select:none;
+    }
+    .btn.primary{border-color: rgba(215,184,90,.32); background: rgba(215,184,90,.12);}
+    .card{
+      margin-top:14px; border:1px solid var(--border); border-radius:var(--radius);
+      background:rgba(0,0,0,.18); box-shadow:0 10px 36px rgba(0,0,0,.35); padding:16px;
+    }
+    h2{margin:0 0 8px; font-size:22px; letter-spacing:-.2px}
+    .sub{margin:0 0 12px; color:var(--muted); font-size:14px}
+    .mono{font-family:var(--mono)}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:7px 10px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.03);
+      font-size:12px; color:var(--muted);
+    }
+    .statusPill{border-color:rgba(247,195,95,.25); background:rgba(247,195,95,.08); color:var(--warn);}
+    .statusOk{border-color:rgba(88,208,138,.25); background:rgba(88,208,138,.08); color:var(--good);}
+    .statusBad{border-color:rgba(255,107,107,.25); background:rgba(255,107,107,.08); color:var(--bad);}
+    .steps{margin-top:10px; display:grid; gap:10px;}
+    .step{
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);
+      border-radius:14px; padding:12px;
+      display:flex; align-items:flex-start; gap:10px;
+    }
+    .dot{
+      width:26px; height:26px; border-radius:10px;
+      border:1px solid rgba(255,255,255,.14);
+      display:flex; align-items:center; justify-content:center;
+      font-weight:900; font-size:12px;
+      background:rgba(0,0,0,.25);
+      flex:0 0 auto;
+    }
+    .dot.wait{color:rgba(255,255,255,.55)}
+    .dot.run{color:var(--warn); border-color:rgba(247,195,95,.25); background:rgba(247,195,95,.08)}
+    .dot.ok{color:var(--good); border-color:rgba(88,208,138,.25); background:rgba(88,208,138,.08)}
+    .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;}
+    .note{font-size:12px; color:rgba(255,255,255,.55); margin-top:10px}
+    .kv{display:grid; grid-template-columns: 150px 1fr; gap:8px 10px; margin-top:10px;}
+    @media (max-width:700px){ .kv{grid-template-columns:1fr} }
+    .kv div{padding:8px 10px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:rgba(255,255,255,.02)}
+    .kv b{color:rgba(255,255,255,.8)}
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div class="brand">
+        <div class="mark" aria-hidden="true"></div>
+        <div>
+          <h1>TruthVerify</h1>
+          <p>Status page (shareable)</p>
+        </div>
+      </div>
+      <nav style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+        <a class="btn" href="./">Home</a>
+        <a class="btn" href="./request.html">New request</a>
+        <a class="btn" href="./v/">/v dashboard</a>
+      </nav>
+    </header>
+
+    <section class="card">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+        <div>
+          <h2>Verification status</h2>
+          <div class="sub">Request ID: <span class="mono" id="reqId"></span></div>
+        </div>
+        <div class="pill statusPill" id="statusPill">PENDING</div>
+      </div>
+
+      <div class="actions">
+        <a class="btn" id="copyLink" href="javascript:void(0)">Copy status link</a>
+        <a class="btn primary" id="payBtn" href="#">Pay & download</a>
+      </div>
+      <div class="note" id="payNote">Pay is locked until this request is Verified.</div>
+
+      <div class="kv" id="kv"></div>
+    </section>
+
+    <section class="card">
+      <h2 style="font-size:18px;margin-bottom:6px;">TruthVerify steps (live)</h2>
+      <p class="sub" style="margin-bottom:10px;">This preview is audit-friendly. v2 will show scan outputs per step.</p>
+
+      <div class="steps">
+        <div class="step"><div class="dot wait" id="d1">1</div><div><b>URL received</b><div class="note">Captured request + metadata</div></div></div>
+        <div class="step"><div class="dot wait" id="d2">2</div><div><b>Snapshot</b><div class="note">Frame / page preview (v1: queued)</div></div></div>
+        <div class="step"><div class="dot wait" id="d3">3</div><div><b>Claim / identity markers</b><div class="note">Handle + consistency markers</div></div></div>
+        <div class="step"><div class="dot wait" id="d4">4</div><div><b>Risk flags</b><div class="note">Redirects / impersonation heuristics</div></div></div>
+        <div class="step"><div class="dot wait" id="d5">5</div><div><b>Pending record</b><div class="note">Queued for review</div></div></div>
+        <div class="step"><div class="dot wait" id="d6">6</div><div><b>Final decision</b><div class="note">Verified → unlock payment</div></div></div>
+      </div>
+    </section>
+
+    <!-- Optional mini-owner tools for demo (remove later) -->
+    <section class="card">
+      <h2 style="font-size:16px;margin-bottom:6px;">Owner tools (MVP demo)</h2>
+      <p class="note">Marks status locally on this device (for investor demo). Remove when you add real backend.</p>
+      <div class="actions">
+        <button class="btn" id="markVerified">Mark Verified</button>
+        <button class="btn" id="markPending">Mark Pending</button>
+        <button class="btn" id="markRejected">Mark Rejected</button>
+      </div>
+    </section>
+  </div>
+
+<script>
+  const params = new URLSearchParams(location.search);
+  const req = params.get("req") || "";
+  document.getElementById("reqId").textContent = req;
+
+  const payBtn = document.getElementById("payBtn");
+  const payNote = document.getElementById("payNote");
+  const statusPill = document.getElementById("statusPill");
+  const kv = document.getElementById("kv");
+
+  function setDot(n, state, text){
+    const el = document.getElementById('d'+n);
+    el.classList.remove('wait','run','ok');
+    el.classList.add(state);
+    el.textContent = text || n;
+  }
+
+  async function runStepsAnimated(finalIsVerified=false){
+    [1,2,3,4,5,6].forEach(i=>setDot(i,'wait', i));
+    const seq = [
+      {n:1, delay:350},
+      {n:2, delay:650},
+      {n:3, delay:700},
+      {n:4, delay:650},
+      {n:5, delay:450},
+      {n:6, delay:500},
+    ];
+    for (const s of seq){
+      setDot(s.n,'run','…');
+      await new Promise(r=>setTimeout(r, s.delay));
+      if (s.n === 6 && !finalIsVerified){
+        setDot(6,'wait','⏳');
+      } else {
+        setDot(s.n,'ok','✓');
+      }
+    }
+  }
+
+  function loadRecord(){
+    try{
+      const arr = JSON.parse(localStorage.getItem("tv_requests") || "[]");
+      return arr.find(x => x.id === req) || null;
+    }catch(_){ return null; }
+  }
+
+  function saveRecord(rec){
+    try{
+      const arr = JSON.parse(localStorage.getItem("tv_requests") || "[]");
+      const idx = arr.findIndex(x => x.id === req);
+      if (idx >= 0) arr[idx] = rec;
+      else arr.unshift(rec);
+      localStorage.setItem("tv_requests", JSON.stringify(arr));
+    }catch(_){}
+  }
+
+  function render(rec){
+    const status = rec?.status || "PENDING";
+    statusPill.textContent = status;
+
+    statusPill.classList.remove("statusPill","statusOk","statusBad");
+    if (status === "VERIFIED") statusPill.classList.add("statusOk");
+    else if (status === "REJECTED") statusPill.classList.add("statusBad");
+    else statusPill.classList.add("statusPill");
+
+    payBtn.href = `./pay.html?req=${encodeURIComponent(req)}`;
+
+    if (status === "VERIFIED"){
+      payBtn.style.pointerEvents = "auto";
+      payBtn.style.opacity = "1";
+      payNote.textContent = "Approved ✅ Pay to unlock badge assets.";
+      runStepsAnimated(true);
+    } else if (status === "REJECTED"){
+      payBtn.style.pointerEvents = "none";
+      payBtn.style.opacity = ".5";
+      payNote.textContent = "Not verified. Payment remains locked.";
+      runStepsAnimated(false);
+    } else {
+      payBtn.style.pointerEvents = "none";
+      payBtn.style.opacity = ".5";
+      payNote.textContent = "Pending review. Payment is locked until Verified.";
+      runStepsAnimated(false);
+    }
+
+    const rows = [
+      ["Creator", rec?.creator_name || "(unknown)"],
+      ["Platform", rec?.platform || "(unknown)"],
+      ["Handle", rec?.handle || "(unknown)"],
+      ["Profile URL", rec?.profile_url || "(none)"],
+      ["Content URL", rec?.content_url || "(none)"],
+      ["Created", rec?.createdAt ? new Date(rec.createdAt).toLocaleString() : "(unknown)"],
+      ["Verified", rec?.verifiedAt ? new Date(rec.verifiedAt).toLocaleString() : "(not yet)"],
+    ];
+
+    kv.innerHTML = rows.map(([k,v]) => `
+      <div><b>${k}</b></div>
+      <div class="mono" style="word-break:break-word">${String(v)}</div>
+    `).join("");
+  }
+
+  document.getElementById("copyLink").onclick = async ()=>{
+    try{
+      await navigator.clipboard.writeText(location.href);
+      const el = document.getElementById("copyLink");
+      el.textContent = "Copied ✅";
+      setTimeout(()=> el.textContent = "Copy status link", 1400);
+    }catch(_){
+      alert("Copy failed. Screenshot this page as backup.");
+    }
+  };
+
+  // Demo owner tools
+  document.getElementById("markVerified").onclick = ()=>{
+    const rec = loadRecord() || {id:req, status:"PENDING", createdAt:new Date().toISOString()};
+    rec.status = "VERIFIED";
+    rec.verifiedAt = new Date().toISOString();
+    saveRecord(rec);
+    render(rec);
+  };
+  document.getElementById("markPending").onclick = ()=>{
+    const rec = loadRecord() || {id:req, status:"PENDING", createdAt:new Date().toISOString()};
+    rec.status = "PENDING";
+    rec.verifiedAt = null;
+    saveRecord(rec);
+    render(rec);
+  };
+  document.getElementById("markRejected").onclick = ()=>{
+    const rec = loadRecord() || {id:req, status:"PENDING", createdAt:new Date().toISOString()};
+    rec.status = "REJECTED";
+    rec.verifiedAt = null;
+    saveRecord(rec);
+    render(rec);
+  };
+
+  render(loadRecord());
+</script>
+</body>
+</html>
