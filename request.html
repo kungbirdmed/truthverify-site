@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>TruthVerify — Request Verification</title>
+
+  <style>
+    :root{
+      --bg:#07080b; --panel:rgba(255,255,255,.05); --border:rgba(255,255,255,.10);
+      --text:rgba(255,255,255,.92); --muted:rgba(255,255,255,.65);
+      --gold:#d7b85a; --good:#58d08a; --warn:#f7c35f;
+      --shadow:0 16px 60px rgba(0,0,0,.55); --radius:18px; --max:980px;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--sans); color:var(--text); line-height:1.45;
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(215,184,90,.10), transparent 60%),
+        radial-gradient(900px 600px at 80% 0%, rgba(88,208,138,.06), transparent 55%),
+        var(--bg);
+    }
+    .wrap{max-width:var(--max); margin:0 auto; padding:22px 16px 70px;}
+    .top{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:14px 16px; border:1px solid var(--border); border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow:var(--shadow); backdrop-filter: blur(10px);
+    }
+    .brand{display:flex; align-items:center; gap:10px;}
+    .mark{width:36px;height:36px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04)}
+    .brand h1{margin:0;font-size:14px;font-weight:850}
+    .brand p{margin:0;font-size:12px;color:var(--muted)}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding:10px 12px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.04);
+      text-decoration:none; font-size:12.5px; color:var(--text); user-select:none;
+    }
+    .btn.primary{border-color: rgba(215,184,90,.32); background: rgba(215,184,90,.12);}
+    .card{
+      margin-top:14px; border:1px solid var(--border); border-radius:var(--radius);
+      background:rgba(0,0,0,.18); box-shadow:0 10px 36px rgba(0,0,0,.35); padding:16px;
+    }
+    h2{margin:0 0 8px; font-size:26px; letter-spacing:-.2px}
+    .sub{margin:0 0 14px; color:var(--muted); font-size:14px}
+    .grid{display:grid; grid-template-columns:1.05fr .95fr; gap:14px; margin-top:14px;}
+    @media (max-width: 900px){ .grid{grid-template-columns:1fr;} }
+    label{display:block; font-size:12.5px; color:var(--muted); margin:10px 0 6px;}
+    input, select, textarea{
+      width:100%; padding:12px 12px; border-radius:12px;
+      border:1px solid rgba(255,255,255,.12); background:rgba(0,0,0,.25);
+      color:var(--text); font-size:14px; outline:none;
+    }
+    textarea{min-height:92px; resize:vertical}
+    .row2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+    @media (max-width: 700px){ .row2{grid-template-columns:1fr;} }
+    .note{font-size:12px; color:rgba(255,255,255,.55); margin-top:10px}
+    .mono{font-family:var(--mono)}
+    .steps{margin-top:10px; display:grid; gap:10px;}
+    .step{
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);
+      border-radius:14px; padding:12px;
+      display:flex; align-items:flex-start; gap:10px;
+    }
+    .dot{
+      width:26px; height:26px; border-radius:10px;
+      border:1px solid rgba(255,255,255,.14);
+      display:flex; align-items:center; justify-content:center;
+      font-weight:900; font-size:12px;
+      background:rgba(0,0,0,.25);
+      flex:0 0 auto;
+    }
+    .dot.wait{color:rgba(255,255,255,.55)}
+    .dot.run{color:var(--warn); border-color:rgba(247,195,95,.25); background:rgba(247,195,95,.08)}
+    .dot.ok{color:var(--good); border-color:rgba(88,208,138,.25); background:rgba(88,208,138,.08)}
+    .banner{
+      display:none;
+      border:1px solid rgba(215,184,90,.28);
+      background: rgba(215,184,90,.10);
+      border-radius: 14px;
+      padding: 12px;
+      margin-top: 12px;
+    }
+    .actionsRow{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;}
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div class="brand">
+        <div class="mark" aria-hidden="true"></div>
+        <div>
+          <h1>TruthVerify</h1>
+          <p>Submit → see checks → pending → verified → pay + download</p>
+        </div>
+      </div>
+      <nav style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+        <a class="btn" href="./">Home</a>
+        <a class="btn" href="./v/">/v dashboard</a>
+      </nav>
+    </header>
+
+    <section class="card">
+      <h2>Request verification (creator)</h2>
+      <p class="sub">
+        You’ll see every step we run. Payment stays locked until verification is complete.
+      </p>
+      <div class="note">v1 is phone-maintainable (no uploads to server yet). Attachments are optional proof you keep; links + summary are what we record.</div>
+    </section>
+
+    <section class="grid">
+      <!-- Form -->
+      <div class="card">
+        <h2 style="font-size:18px; margin-bottom:6px;">Step 1 — Submit</h2>
+
+        <form id="reqForm">
+          <div class="row2">
+            <div>
+              <label>Creator name</label>
+              <input id="creator_name" placeholder="Your name or brand" required />
+            </div>
+            <div>
+              <label>Platform</label>
+              <select id="platform" required>
+                <option value="tiktok">TikTok</option>
+                <option value="instagram">Instagram</option>
+                <option value="youtube">YouTube</option>
+                <option value="x">X</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row2">
+            <div>
+              <label>Handle</label>
+              <input id="handle" placeholder="@yourhandle" required />
+            </div>
+            <div>
+              <label>Email (receipt + follow-up)</label>
+              <input id="email" type="email" placeholder="you@email.com" required />
+            </div>
+          </div>
+
+          <label>Profile URL</label>
+          <input id="profile_url" placeholder="https://..." required />
+
+          <label>Content URL (optional)</label>
+          <input id="content_url" placeholder="https://..." />
+
+          <label>Attach proof files (optional)</label>
+          <input id="files" type="file" multiple />
+
+          <label>Notes (optional)</label>
+          <textarea id="notes" placeholder="Anything we should know?"></textarea>
+
+          <div class="actionsRow">
+            <button type="submit" class="btn primary">Start verification steps →</button>
+            <button type="button" class="btn" id="copyBtn" style="display:none;">Copy submission summary</button>
+          </div>
+
+          <div class="banner" id="banner">
+            <b>Request ID:</b> <span class="mono" id="reqId"></span><br/>
+            Redirecting to your status link…
+          </div>
+
+          <div class="note">Tip: After submitting, tap “Copy submission summary” and paste it into your email / DM to TruthVerify.</div>
+        </form>
+      </div>
+
+      <!-- Steps -->
+      <div class="card">
+        <h2 style="font-size:18px; margin-bottom:6px;">Step 2 — What TruthVerify does</h2>
+        <p class="sub" style="margin-bottom:10px;">Transparent checks. Calm. Repeatable. Audit-friendly.</p>
+
+        <div class="steps">
+          <div class="step"><div class="dot wait" id="d1">1</div><div><b>Input validation</b><div class="note">Fields present + link format sanity</div></div></div>
+          <div class="step"><div class="dot wait" id="d2">2</div><div><b>Profile consistency</b><div class="note">Handle + profile URL continuity markers</div></div></div>
+          <div class="step"><div class="dot wait" id="d3">3</div><div><b>Redirect & link safety</b><div class="note">Suspicious redirects / mismatch heuristics</div></div></div>
+          <div class="step"><div class="dot wait" id="d4">4</div><div><b>Integrity screening (limited v1)</b><div class="note">Heuristic flags → manual review if needed</div></div></div>
+          <div class="step"><div class="dot wait" id="d5">5</div><div><b>Create pending record</b><div class="note">Issue Request ID + status Pending</div></div></div>
+        </div>
+
+        <div class="note" style="margin-top:12px;">
+          v1 shows a transparent pipeline preview. v2 will display real scan outputs per step.
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function makeId(){
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth()+1).padStart(2,'0');
+      const day = String(d.getDate()).padStart(2,'0');
+      const rand = Math.random().toString(36).slice(2,6).toUpperCase();
+      return `TV-REQ-${y}${m}${day}-${rand}`;
+    }
+
+    function setDot(n, state, text){
+      const el = document.getElementById('d'+n);
+      el.classList.remove('wait','run','ok');
+      el.classList.add(state);
+      el.textContent = text || n;
+    }
+
+    async function runSteps(){
+      [1,2,3,4,5].forEach(i=>setDot(i,'wait', i));
+      const seq = [
+        {n:1, delay:500},
+        {n:2, delay:800},
+        {n:3, delay:900},
+        {n:4, delay:900},
+        {n:5, delay:500},
+      ];
+      for (const s of seq){
+        setDot(s.n,'run','…');
+        await new Promise(r=>setTimeout(r, s.delay));
+        setDot(s.n,'ok','✓');
+      }
+    }
+
+    const form = document.getElementById('reqForm');
+    const banner = document.getElementById('banner');
+    const reqIdEl = document.getElementById('reqId');
+    const copyBtn = document.getElementById('copyBtn');
+
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+
+      const id = makeId();
+      reqIdEl.textContent = id;
+
+      banner.style.display = "block";
+      copyBtn.style.display = "inline-flex";
+
+      // Build copyable summary
+      const files = document.getElementById('files').files;
+      const fileNames = Array.from(files || []).map(f=>f.name);
+
+      const record = {
+        id,
+        creator_name: document.getElementById('creator_name').value,
+        platform: document.getElementById('platform').value,
+        handle: document.getElementById('handle').value,
+        email: document.getElementById('email').value,
+        profile_url: document.getElementById('profile_url').value,
+        content_url: document.getElementById('content_url').value || '',
+        file_names: fileNames,
+        notes: document.getElementById('notes').value || '',
+        status: "PENDING",
+        createdAt: new Date().toISOString(),
+        verifiedAt: null
+      };
+
+      try{
+        const key = "tv_requests";
+        const arr = JSON.parse(localStorage.getItem(key) || "[]");
+        arr.unshift(record);
+        localStorage.setItem(key, JSON.stringify(arr));
+      }catch(_){}
+
+      const summary = [
+        `TruthVerify — Verification Request`,
+        `Request ID: ${id}`,
+        `Creator name: ${record.creator_name}`,
+        `Platform: ${record.platform}`,
+        `Handle: ${record.handle}`,
+        `Email: ${record.email}`,
+        `Profile URL: ${record.profile_url}`,
+        `Content URL: ${record.content_url || '(none)'}`,
+        `Files attached (names): ${record.file_names.length ? record.file_names.join(', ') : '(none)'}`,
+        `Notes: ${record.notes || '(none)'}`
+      ].join('\n');
+
+      copyBtn.onclick = async ()=>{
+        try{
+          await navigator.clipboard.writeText(summary);
+          copyBtn.textContent = "Copied ✅";
+          setTimeout(()=> copyBtn.textContent="Copy submission summary", 1400);
+        }catch(err){
+          alert("Copy failed. Screenshot this page as backup.");
+        }
+      };
+
+      await runSteps();
+      window.location.href = `./status.html?req=${encodeURIComponent(id)}`;
+    });
+  </script>
+</body>
+</html>
