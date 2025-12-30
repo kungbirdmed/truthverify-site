@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>TruthVerify — Pay & Download</title>
+  <meta name="description" content="Pay only after verified. Download badge assets." />
+  <style>
+    :root{
+      --bg:#07080b; --panel:rgba(255,255,255,.05); --border:rgba(255,255,255,.10);
+      --text:rgba(255,255,255,.92); --muted:rgba(255,255,255,.65);
+      --gold:#d7b85a; --good:#58d08a; --warn:#f7c35f;
+      --shadow:0 16px 60px rgba(0,0,0,.55); --radius:18px; --max:900px;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--sans); color:var(--text); line-height:1.45;
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(215,184,90,.10), transparent 60%),
+        var(--bg);
+    }
+    .wrap{max-width:var(--max); margin:0 auto; padding:22px 16px 70px;}
+    .card{
+      margin-top:14px; border:1px solid var(--border); border-radius:var(--radius);
+      background:rgba(0,0,0,.18); box-shadow:0 10px 36px rgba(0,0,0,.35); padding:16px;
+    }
+    a{color:inherit}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding:10px 12px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.04);
+      text-decoration:none; font-size:12.5px; color:var(--text);
+    }
+    .btn.primary{border-color: rgba(215,184,90,.32); background: rgba(215,184,90,.12);}
+    .mono{font-family:var(--mono)}
+    .lock{
+      border:1px solid rgba(247,195,95,.22); background: rgba(247,195,95,.06);
+      border-radius:14px; padding:12px; margin-top:12px;
+    }
+    .ok{
+      border:1px solid rgba(88,208,138,.22); background: rgba(88,208,138,.06);
+      border-radius:14px; padding:12px; margin-top:12px;
+    }
+    .muted{color:var(--muted)}
+    ul{margin:10px 0 0; padding-left:18px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h2 style="margin:0 0 8px;">Pay & download badge</h2>
+      <div class="muted">Request ID: <span class="mono" id="reqId"></span></div>
+
+      <div id="state"></div>
+
+      <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+        <a class="btn" href="./">Home</a>
+        <a class="btn" href="./v/">/v dashboard</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const req = params.get('req') || '';
+    document.getElementById('reqId').textContent = req || '(missing)';
+
+    function esc(s){ return (s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+    async function load(){
+      const state = document.getElementById('state');
+
+      if(!req){
+        state.innerHTML = `<div class="lock"><b>Missing Request ID</b><div class="muted">Open this page from your request receipt link.</div></div>`;
+        return;
+      }
+
+      try{
+        const res = await fetch('./v/data.json', {cache:'no-store'});
+        const data = await res.json();
+        const records = (data && data.records) ? data.records : [];
+        const rec = records.find(r => (r.id || '').toLowerCase() === req.toLowerCase());
+
+        if(!rec){
+          state.innerHTML = `<div class="lock"><b>Not found yet</b><div class="muted">This Request ID isn’t on the public record yet. Try again later.</div></div>`;
+          return;
+        }
+
+        const status = (rec.status || '').toLowerCase();
+
+        if(status !== 'verified'){
+          state.innerHTML = `
+            <div class="lock">
+              <b>Payment locked (pending verification)</b>
+              <div class="muted">Status: <span class="mono">${esc(rec.status || 'pending')}</span></div>
+              <div class="muted" style="margin-top:6px;">You can pay only after verification is complete.</div>
+            </div>`;
+          return;
+        }
+
+        // VERIFIED → unlock pay + downloads
+        const hash = rec.hash || '';
+        // Expected file convention you already have:
+        // public/badges/truth_verified_<hash>.png
+        // public/badges/truth_verified_<hash>.pdf
+        // public/badges/qr_<hash>.png
+        const badgePng = `./public/badges/truth_verified_${hash}.png`;
+        const badgePdf = `./public/badges/truth_verified_${hash}.pdf`;
+        const qrPng    = `./public/badges/qr_${hash}.png`;
+        const verifyUrl = rec.verified_url || './v/';
+
+        state.innerHTML = `
+          <div class="ok">
+            <b>Verified ✅</b>
+            <div class="muted" style="margin-top:6px;">Your badge assets are ready. Pay now to activate delivery + receipt.</div>
+          </div>
+
+          <div class="card" style="margin-top:12px;">
+            <h3 style="margin:0 0 8px;">Step 1 — Pay</h3>
+            <div class="muted">This is where we connect your PayPal plan/checkout.</div>
+            <div style="margin-top:10px;">
+              <a class="btn primary" href="./subscribe.html?req=${encodeURIComponent(req)}">Pay now →</a>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:12px;">
+            <h3 style="margin:0 0 8px;">Step 2 — Download</h3>
+            <ul>
+              <li><a href="${badgePng}" download>Badge PNG</a></li>
+              <li><a href="${badgePdf}" download>Badge PDF</a></li>
+              <li><a href="${qrPng}" download>QR PNG</a></li>
+              <li><a href="${verifyUrl}">Open verification page</a></li>
+            </ul>
+            <div class="muted" style="margin-top:8px;">If a download fails, open the file then use iPhone Share → Save.</div>
+          </div>
+        `;
+      }catch(e){
+        state.innerHTML = `<div class="lock"><b>Error loading status</b><div class="muted">${esc(String(e))}</div></div>`;
+      }
+    }
+
+    load();
+  </script>
+</body>
+</html>
