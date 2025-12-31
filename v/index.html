@@ -482,7 +482,7 @@
       const plat = platformLabel(r.platform);
       const issued = formatDate(r.issued_at);
       const exp = r.expires_at ? formatDate(r.expires_at) : "—";
-      const url = r.verified_url || "#";
+      const url = const url = `./verify.html?id=${encodeURIComponent(r.id)}`;
       const hash = r.hash || "—";
 
       return `
