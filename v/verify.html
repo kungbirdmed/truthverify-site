@@ -64,6 +64,7 @@
 
   <div class="card" id="state">Loading…</div>
   <div class="card" id="details" style="display:none;"></div>
+  <div class="card" id="downloads" style="display:none;"></div>
 </div>
 
 <script>
@@ -106,6 +107,37 @@
       document.getElementById("state").textContent = "Failed to load verification record.";
     }
   }
+  function setupDownloads(rec, id){
+  if ((rec.status || "").toLowerCase() !== "verified") return;
+
+  const el = document.getElementById("downloads");
+  if (!el) return;
+
+  el.style.display = "block";
+  el.innerHTML = `
+    <div class="badgeWrap">
+      <div class="badgePreview">
+        <div class="pill">TruthVerify • Verified</div>
+        <h3 style="margin:10px 0 4px;">${rec.creator_name || rec.creator || "Verified Creator"}</h3>
+        <div class="mono">${id}</div>
+        <div class="small">Public verification record</div>
+      </div>
+
+      <div>
+        <div class="btnRow">
+          <button class="btn" id="dlPng">Download PNG</button>
+          <button class="btn" id="dlPdf">Download PDF</button>
+        </div>
+        <div class="small">
+          Use this badge on TikTok, bio links, or websites.
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById("dlPng").onclick = () => { downloadPNG(rec, id); };
+  document.getElementById("dlPdf").onclick = () => { downloadPDF(rec, id); };
+}
   load();
 </script>
 </body>
