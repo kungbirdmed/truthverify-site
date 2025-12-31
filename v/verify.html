@@ -15,38 +15,39 @@
     .wrap{max-width:820px;margin:0 auto;padding:22px 16px 70px}
     .card{margin-top:14px;border:1px solid var(--border);border-radius:18px;background:rgba(255,255,255,.04);padding:16px}
     .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace}
-    .pill{display:inline-flex;gap:8px;align-items:center;padding:7px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);font-size:12px;color:var(--muted)}
-    .status.ok{color:var(--good)}
+    .pill{display:inline-flex;gap:8px;align-items:center;padding:7px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);font-size:12px;color:var(--muted);text-decoration:none}
+    .status.verified{color:var(--good)}
     .status.pending{color:var(--warn)}
     .kv{display:grid;grid-template-columns:160px 1fr;gap:8px 10px;margin-top:12px}
     @media(max-width:700px){.kv{grid-template-columns:1fr}}
     .kv div{padding:10px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(255,255,255,.02);word-break:break-word}
-  .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-.btn{
-  appearance:none;
-  border:1px solid rgba(255,255,255,.14);
-  background:rgba(255,255,255,.06);
-  color:var(--text);
-  padding:10px 12px;
-  border-radius:14px;
-  font-size:13px;
-  cursor:pointer;
-}
-.btn:active{transform:scale(.99)}
-.badgeWrap{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
-.badgePreview{
-  border:1px solid rgba(255,255,255,.10);
-  background:rgba(0,0,0,.25);
-  border-radius:16px;
-  padding:12px;
-  width:min(360px,100%);
-}
-.small{
-  color:var(--muted);
-  font-size:12px;
-  margin-top:8px;
-  line-height:1.35;
-}
+
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .btn{
+      appearance:none;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      font-size:13px;
+      cursor:pointer;
+    }
+    .btn:active{transform:scale(.99)}
+    .badgeWrap{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+    .badgePreview{
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.25);
+      border-radius:16px;
+      padding:12px;
+      width:min(360px,100%);
+    }
+    .small{
+      color:var(--muted);
+      font-size:12px;
+      margin-top:8px;
+      line-height:1.35;
+    }
   </style>
 </head>
 <body>
@@ -70,16 +71,21 @@
 <script>
   const id = new URLSearchParams(location.search).get("id");
   document.getElementById("badgeId").textContent = id || "(missing)";
-  
-  // --- Badge SVG (dark/gold minimal) ---
+
+  function escapeXml(s){
+    return (s ?? "").toString()
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&apos;");
+  }
+
   function badgeSVG(rec, id){
     const creator = (rec.creator_name || rec.creator || rec.creatorName || "TruthVerify").toString();
     const status = (rec.status || "pending").toString().toLowerCase();
     const statusLabel = status === "verified" ? "Verified" : (status === "revoked" ? "Revoked" : "Pending");
-
     const pillColor = status === "verified" ? "#58d08a" : (status === "revoked" ? "#ff6b6b" : "#f7c35f");
-
-    // Safe shorten for display
     const badgeId = (id || rec.id || rec.badge || rec.badgeId || "TV-????").toString();
 
     return `
@@ -130,19 +136,8 @@
 </svg>`;
   }
 
-  function escapeXml(s){
-    return (s ?? "").toString()
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&apos;");
-  }
-
-  // --- Convert SVG -> PNG blob (iPhone-safe) ---
   async function svgToPngBlob(svgText, w=1200, h=630){
     const svgDataUrl = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgText);
-
     const img = new Image();
     img.decoding = "async";
     img.src = svgDataUrl;
@@ -153,11 +148,8 @@
     });
 
     const canvas = document.createElement("canvas");
-    canvas.width = w;
-    canvas.height = h;
-
+    canvas.width = w; canvas.height = h;
     const ctx = canvas.getContext("2d");
-    // background (avoid transparent)
     ctx.fillStyle = "#07080b";
     ctx.fillRect(0,0,w,h);
     ctx.drawImage(img, 0, 0, w, h);
@@ -167,22 +159,13 @@
     });
   }
 
-  // --- iOS-friendly “download”: open blob in new tab, user uses Share sheet ---
-  function openBlobInNewTab(blob, filename){
+  function openBlobInNewTab(blob){
     const url = URL.createObjectURL(blob);
-
-    // iOS Safari often ignores <a download>, so we open a new tab instead.
     const win = window.open(url, "_blank");
-    if(!win){
-      // popup blocked; fallback
-      location.href = url;
-    }
-
-    // revoke later
+    if(!win) location.href = url;
     setTimeout(() => URL.revokeObjectURL(url), 60_000);
   }
 
-  // --- PDF: open print-friendly page (user: Share/Print -> Save to Files as PDF) ---
   function openPrintPDF(svgText, title){
     const html = `
 <!doctype html>
@@ -201,41 +184,57 @@
 </head>
 <body>
   <div class="wrap">
-    <p class="note">iPhone: Tap Share → Print → pinch-out preview → Share → Save to Files (PDF).</p>
+    <p class="note">iPhone: Share → Print → pinch-out preview → Share → Save to Files (PDF).</p>
     ${svgText}
   </div>
-  <script>
-    setTimeout(() => window.print(), 300);
-  <\/script>
+  <script>setTimeout(() => window.print(), 300);<\/script>
 </body>
 </html>`;
-    const blob = new Blob([html], {type:"text/html"});
-    openBlobInNewTab(blob, (title || "badge") + ".html");
+    openBlobInNewTab(new Blob([html], {type:"text/html"}));
   }
 
-  // --- The function your page is calling ---
-  function setupDownloads(rec, id){
-    const btnPng = document.getElementById("dlPng");
-    const btnPdf = document.getElementById("dlPdf");
-    if(!btnPng || !btnPdf) return;
+  function setupDownloads(rec, badgeId){
+    // only show for verified (optional)
+    if ((rec.status || "").toLowerCase() !== "verified") return;
 
-    const badgeId = id || rec.id || rec.badge || rec.badgeId || "TV-UNKNOWN";
-    const creator = rec.creator_name || rec.creator || rec.creatorName || "TruthVerify";
-    const fileBase = `${badgeId}`.replaceAll(/[^\w\-]+/g, "_");
+    const el = document.getElementById("downloads");
+    if (!el) return;
 
-    btnPng.onclick = async () => {
+    const creator = rec.creator_name || rec.creator || rec.creatorName || "Verified Creator";
+
+    el.style.display = "block";
+    el.innerHTML = `
+      <div class="badgeWrap">
+        <div class="badgePreview">
+          <div class="pill">TruthVerify • Verified</div>
+          <h3 style="margin:10px 0 4px;">${escapeXml(creator)}</h3>
+          <div class="mono">${escapeXml(badgeId)}</div>
+          <div class="small">Public verification record</div>
+        </div>
+
+        <div>
+          <div class="btnRow">
+            <button class="btn" id="dlPng" type="button">Download PNG</button>
+            <button class="btn" id="dlPdf" type="button">Download PDF</button>
+          </div>
+          <div class="small">Use this badge on TikTok, bio links, or websites.</div>
+        </div>
+      </div>
+    `;
+
+    // bind AFTER innerHTML exists
+    document.getElementById("dlPng").onclick = async () => {
       try{
         const svg = badgeSVG(rec, badgeId);
-        const pngBlob = await svgToPngBlob(svg, 1200, 630);
-        if(!pngBlob) throw new Error("PNG export failed.");
-        openBlobInNewTab(pngBlob, `${fileBase}.png`);
+        const blob = await svgToPngBlob(svg, 1200, 630);
+        openBlobInNewTab(blob);
       }catch(err){
         console.warn(err);
         alert("PNG export failed on this device. Try again, or use the PDF/Print option.");
       }
     };
 
-    btnPdf.onclick = () => {
+    document.getElementById("dlPdf").onclick = () => {
       try{
         const svg = badgeSVG(rec, badgeId);
         openPrintPDF(svg, `${creator} • ${badgeId}`);
@@ -245,7 +244,6 @@
       }
     };
   }
-<
 
   async function load(){
     try{
@@ -262,59 +260,7 @@
       }
 
       const status = (rec.status || "pending").toLowerCase();
-      state.innerHTML = `<b>Status:</b> <span class="status ${status}">${rec.status}</span>`;
+      state.innerHTML = `<b>Status:</b> <span class="status ${status}">${escapeXml(rec.status)}</span>`;
 
       const rows = [
-  ["Creator", rec.creator_name || rec.creator || rec.creatorName || "—"],
-  ["Handle", rec.handle || "—"],
-  ["Platform", rec.platform || "—"],
-  ["Issued", rec.issued_at || "—"],
-  ["Expires", rec.expires_at || "—"],
-  ["Notes", rec.notes || "—"]
-];
-
-
-      details.style.display = "block";
-      details.innerHTML = `<div class="kv">${
-        rows.map(([k,v])=>`<div><b>${k}</b></div><div class="mono">${v ?? "—"}</div>`).join("")
-      }</div>`;
-      try { setupDownloads?.(rec, id); } catch (err) { console.warn("downloads error", err); }
-    }catch(e){
-      document.getElementById("state").textContent = "Failed to load verification record.";
-    }
-  }
-  function setupDownloads(rec, id){
-  if ((rec.status || "").toLowerCase() !== "verified") return;
-
-  const el = document.getElementById("downloads");
-  if (!el) return;
-
-  el.style.display = "block";
-  el.innerHTML = `
-    <div class="badgeWrap">
-      <div class="badgePreview">
-        <div class="pill">TruthVerify • Verified</div>
-        <h3 style="margin:10px 0 4px;">${rec.creator_name || rec.creator || "Verified Creator"}</h3>
-        <div class="mono">${id}</div>
-        <div class="small">Public verification record</div>
-      </div>
-
-      <div>
-        <div class="btnRow">
-          <button class="btn" id="dlPng">Download PNG</button>
-          <button class="btn" id="dlPdf">Download PDF</button>
-        </div>
-        <div class="small">
-          Use this badge on TikTok, bio links, or websites.
-        </div>
-      </div>
-    </div>
-  `;
-
-  document.getElementById("dlPng").onclick = () => { downloadPNG(rec, id); };
-  document.getElementById("dlPdf").onclick = () => { downloadPDF(rec, id); };
-}
-  load();
-</script>
-</body>
-</html>
+        ["Creator", rec.creator_name || rec.creator || rec.creatorName || "—
