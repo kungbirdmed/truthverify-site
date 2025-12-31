@@ -46,7 +46,7 @@
   font-size:12px;
   margin-top:8px;
   line-height:1.35;
-
+}
   </style>
 </head>
 <body>
@@ -71,7 +71,6 @@
   const id = new URLSearchParams(location.search).get("id");
   document.getElementById("badgeId").textContent = id || "(missing)";
   
-  <script>
   // --- Badge SVG (dark/gold minimal) ---
   function badgeSVG(rec, id){
     const creator = (rec.creator_name || rec.creator || rec.creatorName || "TruthVerify").toString();
