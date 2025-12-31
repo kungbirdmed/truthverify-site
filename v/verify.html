@@ -21,6 +21,32 @@
     .kv{display:grid;grid-template-columns:160px 1fr;gap:8px 10px;margin-top:12px}
     @media(max-width:700px){.kv{grid-template-columns:1fr}}
     .kv div{padding:10px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(255,255,255,.02);word-break:break-word}
+  .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.btn{
+  appearance:none;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.06);
+  color:var(--text);
+  padding:10px 12px;
+  border-radius:14px;
+  font-size:13px;
+  cursor:pointer;
+}
+.btn:active{transform:scale(.99)}
+.badgeWrap{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+.badgePreview{
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(0,0,0,.25);
+  border-radius:16px;
+  padding:12px;
+  width:min(360px,100%);
+}
+.small{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:8px;
+  line-height:1.35;
+
   </style>
 </head>
 <body>
