@@ -61,14 +61,14 @@
       const status = (rec.status || "pending").toLowerCase();
       state.innerHTML = `<b>Status:</b> <span class="status ${status}">${rec.status}</span>`;
 
-      const rows = [
-        ["Creator", rec.creator || rec.creatorName],
-        ["Handle", rec.handle],
-        ["Platform", rec.platform],
-        ["Issued", rec.issued],
-        ["Expires", rec.expires || "—"],
-        ["Notes", rec.notes || "—"]
-      ];
+      const rows = const rows = [
+  ["Creator", rec.creator_name || rec.creator || rec.creatorName || "—"],
+  ["Handle", rec.handle || "—"],
+  ["Platform", rec.platform || "—"],
+  ["Issued", rec.issued_at || rec.issued || "—"],
+  ["Expires", rec.expires_at || rec.expires || "—"],
+  ["Notes", rec.notes || "—"]
+];
 
       details.style.display = "block";
       details.innerHTML = `<div class="kv">${
