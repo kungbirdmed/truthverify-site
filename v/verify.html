@@ -70,6 +70,183 @@
 <script>
   const id = new URLSearchParams(location.search).get("id");
   document.getElementById("badgeId").textContent = id || "(missing)";
+  
+  <script>
+  // --- Badge SVG (dark/gold minimal) ---
+  function badgeSVG(rec, id){
+    const creator = (rec.creator_name || rec.creator || rec.creatorName || "TruthVerify").toString();
+    const status = (rec.status || "pending").toString().toLowerCase();
+    const statusLabel = status === "verified" ? "Verified" : (status === "revoked" ? "Revoked" : "Pending");
+
+    const pillColor = status === "verified" ? "#58d08a" : (status === "revoked" ? "#ff6b6b" : "#f7c35f");
+
+    // Safe shorten for display
+    const badgeId = (id || rec.id || rec.badge || rec.badgeId || "TV-????").toString();
+
+    return `
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#0b0c10"/>
+      <stop offset="1" stop-color="#07080b"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="30%" cy="20%" r="60%">
+      <stop offset="0" stop-color="rgba(215,184,90,.22)"/>
+      <stop offset="1" stop-color="rgba(215,184,90,0)"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#g)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <rect x="70" y="70" width="1060" height="490" rx="34"
+        fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.10)" />
+
+  <rect x="110" y="120" width="240" height="54" rx="27"
+        fill="rgba(0,0,0,.35)" stroke="rgba(255,255,255,.12)"/>
+  <circle cx="140" cy="147" r="8" fill="${pillColor}"/>
+  <text x="160" y="154" fill="rgba(255,255,255,.88)" font-size="22" font-family="system-ui, -apple-system, Segoe UI">
+    TruthVerify • ${statusLabel}
+  </text>
+
+  <text x="110" y="250" fill="rgba(255,255,255,.92)" font-size="60"
+        font-family="system-ui, -apple-system, Segoe UI" font-weight="650">
+    ${escapeXml(creator)}
+  </text>
+
+  <text x="110" y="318" fill="rgba(215,184,90,.95)" font-size="34"
+        font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace">
+    ${escapeXml(badgeId)}
+  </text>
+
+  <text x="110" y="390" fill="rgba(255,255,255,.65)" font-size="22"
+        font-family="system-ui, -apple-system, Segoe UI">
+    Public verification record
+  </text>
+
+  <text x="110" y="520" fill="rgba(255,255,255,.45)" font-size="18"
+        font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace">
+    kungbirdmed.github.io/truthverify-site/v/verify.html?id=${escapeXml(badgeId)}
+  </text>
+</svg>`;
+  }
+
+  function escapeXml(s){
+    return (s ?? "").toString()
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&apos;");
+  }
+
+  // --- Convert SVG -> PNG blob (iPhone-safe) ---
+  async function svgToPngBlob(svgText, w=1200, h=630){
+    const svgDataUrl = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgText);
+
+    const img = new Image();
+    img.decoding = "async";
+    img.src = svgDataUrl;
+
+    await new Promise((resolve, reject) => {
+      img.onload = resolve;
+      img.onerror = reject;
+    });
+
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+
+    const ctx = canvas.getContext("2d");
+    // background (avoid transparent)
+    ctx.fillStyle = "#07080b";
+    ctx.fillRect(0,0,w,h);
+    ctx.drawImage(img, 0, 0, w, h);
+
+    return await new Promise((resolve) => {
+      canvas.toBlob((blob) => resolve(blob), "image/png", 0.95);
+    });
+  }
+
+  // --- iOS-friendly “download”: open blob in new tab, user uses Share sheet ---
+  function openBlobInNewTab(blob, filename){
+    const url = URL.createObjectURL(blob);
+
+    // iOS Safari often ignores <a download>, so we open a new tab instead.
+    const win = window.open(url, "_blank");
+    if(!win){
+      // popup blocked; fallback
+      location.href = url;
+    }
+
+    // revoke later
+    setTimeout(() => URL.revokeObjectURL(url), 60_000);
+  }
+
+  // --- PDF: open print-friendly page (user: Share/Print -> Save to Files as PDF) ---
+  function openPrintPDF(svgText, title){
+    const html = `
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>${escapeXml(title || "TruthVerify Badge")}</title>
+  <style>
+    body{ margin:0; padding:24px; font-family: system-ui; background:#fff; }
+    .wrap{ max-width:900px; margin:0 auto; }
+    .note{ margin: 0 0 14px; color:#333; font-size:14px; }
+    svg{ width:100%; height:auto; display:block; }
+    @media print { .note{ display:none; } body{ padding:0; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="note">iPhone: Tap Share → Print → pinch-out preview → Share → Save to Files (PDF).</p>
+    ${svgText}
+  </div>
+  <script>
+    setTimeout(() => window.print(), 300);
+  <\/script>
+</body>
+</html>`;
+    const blob = new Blob([html], {type:"text/html"});
+    openBlobInNewTab(blob, (title || "badge") + ".html");
+  }
+
+  // --- The function your page is calling ---
+  function setupDownloads(rec, id){
+    const btnPng = document.getElementById("dlPng");
+    const btnPdf = document.getElementById("dlPdf");
+    if(!btnPng || !btnPdf) return;
+
+    const badgeId = id || rec.id || rec.badge || rec.badgeId || "TV-UNKNOWN";
+    const creator = rec.creator_name || rec.creator || rec.creatorName || "TruthVerify";
+    const fileBase = `${badgeId}`.replaceAll(/[^\w\-]+/g, "_");
+
+    btnPng.onclick = async () => {
+      try{
+        const svg = badgeSVG(rec, badgeId);
+        const pngBlob = await svgToPngBlob(svg, 1200, 630);
+        if(!pngBlob) throw new Error("PNG export failed.");
+        openBlobInNewTab(pngBlob, `${fileBase}.png`);
+      }catch(err){
+        console.warn(err);
+        alert("PNG export failed on this device. Try again, or use the PDF/Print option.");
+      }
+    };
+
+    btnPdf.onclick = () => {
+      try{
+        const svg = badgeSVG(rec, badgeId);
+        openPrintPDF(svg, `${creator} • ${badgeId}`);
+      }catch(err){
+        console.warn(err);
+        alert("PDF export failed. Try again.");
+      }
+    };
+  }
+</script>
 
   async function load(){
     try{
