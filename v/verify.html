@@ -18,6 +18,7 @@
     .pill{display:inline-flex;gap:8px;align-items:center;padding:7px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);font-size:12px;color:var(--muted);text-decoration:none}
     .status.verified{color:var(--good)}
     .status.pending{color:var(--warn)}
+    .status.revoked{color:#ff6b6b}
     .kv{display:grid;grid-template-columns:160px 1fr;gap:8px 10px;margin-top:12px}
     @media(max-width:700px){.kv{grid-template-columns:1fr}}
     .kv div{padding:10px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(255,255,255,.02);word-break:break-word}
@@ -81,12 +82,12 @@
       .replaceAll("'","&apos;");
   }
 
-  function badgeSVG(rec, id){
+  // --- Badge SVG (dark/gold minimal) ---
+  function badgeSVG(rec, badgeId){
     const creator = (rec.creator_name || rec.creator || rec.creatorName || "TruthVerify").toString();
     const status = (rec.status || "pending").toString().toLowerCase();
     const statusLabel = status === "verified" ? "Verified" : (status === "revoked" ? "Revoked" : "Pending");
     const pillColor = status === "verified" ? "#58d08a" : (status === "revoked" ? "#ff6b6b" : "#f7c35f");
-    const badgeId = (id || rec.id || rec.badge || rec.badgeId || "TV-????").toString();
 
     return `
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
@@ -136,8 +137,10 @@
 </svg>`;
   }
 
+  // --- Convert SVG -> PNG blob (iPhone-safe) ---
   async function svgToPngBlob(svgText, w=1200, h=630){
     const svgDataUrl = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgText);
+
     const img = new Image();
     img.decoding = "async";
     img.src = svgDataUrl;
@@ -148,7 +151,9 @@
     });
 
     const canvas = document.createElement("canvas");
-    canvas.width = w; canvas.height = h;
+    canvas.width = w;
+    canvas.height = h;
+
     const ctx = canvas.getContext("2d");
     ctx.fillStyle = "#07080b";
     ctx.fillRect(0,0,w,h);
@@ -159,13 +164,15 @@
     });
   }
 
-  function openBlobInNewTab(blob){
+  // iOS-friendly: open blob in new tab (user can Share/Save)
+  function openBlob(blob){
     const url = URL.createObjectURL(blob);
     const win = window.open(url, "_blank");
-    if(!win) location.href = url;
+    if(!win) location.href = url; // fallback if popup blocked
     setTimeout(() => URL.revokeObjectURL(url), 60_000);
   }
 
+  // PDF: open print page, iPhone uses Share → Print → Save to Files (PDF)
   function openPrintPDF(svgText, title){
     const html = `
 <!doctype html>
@@ -190,17 +197,18 @@
   <script>setTimeout(() => window.print(), 300);<\/script>
 </body>
 </html>`;
-    openBlobInNewTab(new Blob([html], {type:"text/html"}));
+    openBlob(new Blob([html], {type:"text/html"}));
   }
 
   function setupDownloads(rec, badgeId){
-    // only show for verified (optional)
+    // show only for verified (change/remove if you want always shown)
     if ((rec.status || "").toLowerCase() !== "verified") return;
 
     const el = document.getElementById("downloads");
     if (!el) return;
 
     const creator = rec.creator_name || rec.creator || rec.creatorName || "Verified Creator";
+    const safeFileBase = (badgeId || "TV-UNKNOWN").toString().replaceAll(/[^\w\-]+/g, "_");
 
     el.style.display = "block";
     el.innerHTML = `
@@ -222,12 +230,12 @@
       </div>
     `;
 
-    // bind AFTER innerHTML exists
     document.getElementById("dlPng").onclick = async () => {
       try{
         const svg = badgeSVG(rec, badgeId);
-        const blob = await svgToPngBlob(svg, 1200, 630);
-        openBlobInNewTab(blob);
+        const pngBlob = await svgToPngBlob(svg, 1200, 630);
+        if(!pngBlob) throw new Error("PNG export failed.");
+        openBlob(pngBlob); // iPhone: opens image in new tab
       }catch(err){
         console.warn(err);
         alert("PNG export failed on this device. Try again, or use the PDF/Print option.");
@@ -263,4 +271,26 @@
       state.innerHTML = `<b>Status:</b> <span class="status ${status}">${escapeXml(rec.status)}</span>`;
 
       const rows = [
-        ["Creator", rec.creator_name || rec.creator || rec.creatorName || "—
+        ["Creator", rec.creator_name || rec.creator || rec.creatorName || "—"],
+        ["Handle", rec.handle || "—"],
+        ["Platform", rec.platform || "—"],
+        ["Issued", rec.issued_at || "—"],
+        ["Expires", rec.expires_at || "—"],
+        ["Notes", rec.notes || "—"]
+      ];
+
+      details.style.display = "block";
+      details.innerHTML = `<div class="kv">${
+        rows.map(([k,v])=>`<div><b>${escapeXml(k)}</b></div><div class="mono">${escapeXml(v ?? "—")}</div>`).join("")
+      }</div>`;
+
+      setupDownloads(rec, id);
+    }catch(e){
+      document.getElementById("state").textContent = "Failed to load verification record.";
+    }
+  }
+
+  load();
+</script>
+</body>
+</html>
