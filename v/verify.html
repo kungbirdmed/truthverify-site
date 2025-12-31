@@ -75,7 +75,7 @@
       details.innerHTML = `<div class="kv">${
         rows.map(([k,v])=>`<div><b>${k}</b></div><div class="mono">${v ?? "—"}</div>`).join("")
       }</div>`;
-      setupDownloads(rec, id);
+      try { setupDownloads?.(rec, id); } catch (err) { console.warn("downloads error", err); }
     }catch(e){
       document.getElementById("state").textContent = "Failed to load verification record.";
     }
