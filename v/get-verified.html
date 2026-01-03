@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TruthVerify — Get Verified</title>
+  <meta name="description" content="Request verification. TruthVerify publishes a clear scope, evidence references, and a tamper-evident record ID." />
+  <meta name="theme-color" content="#0b0f1a" />
+
+  <style>
+    :root{
+      --bg:#070a12;
+      --panel:#0b1020;
+      --panel2:#0a0f1c;
+      --border:rgba(255,255,255,.10);
+      --soft:rgba(255,255,255,.06);
+      --text:rgba(255,255,255,.90);
+      --muted:rgba(255,255,255,.66);
+      --faint:rgba(255,255,255,.46);
+      --gold:#f6c34a;
+      --gold2:#ffdc7a;
+      --good:#39d98a;
+      --warn:#ffd166;
+      --bad:#ff5c5c;
+
+      --radius:18px;
+      --shadow: 0 18px 50px rgba(0,0,0,.55);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1000px 600px at 25% 0%, rgba(246,195,74,.16), transparent 60%),
+        radial-gradient(900px 700px at 80% 10%, rgba(104,182,255,.10), transparent 55%),
+        radial-gradient(900px 700px at 50% 120%, rgba(255,255,255,.06), transparent 60%),
+        var(--bg);
+      overflow-x:hidden;
+    }
+
+    a{color:inherit}
+    .wrap{
+      max-width:980px;
+      margin:0 auto;
+      padding:28px 18px 56px;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:18px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      text-decoration:none;
+    }
+    .mark{
+      width:38px;height:38px;border-radius:12px;
+      background:
+        radial-gradient(16px 16px at 30% 30%, rgba(255,220,122,.85), transparent 60%),
+        radial-gradient(22px 22px at 70% 70%, rgba(246,195,74,.50), transparent 60%),
+        linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.02));
+      border:1px solid var(--border);
+      box-shadow:0 10px 26px rgba(0,0,0,.35);
+    }
+    .brand h1{
+      font-size:15px;
+      margin:0;
+      letter-spacing:.2px;
+      font-weight:650;
+    }
+    .brand .sub{
+      display:block;
+      margin-top:2px;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:500;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      text-decoration:none;
+      font-size:13px;
+      color:var(--text);
+      transition:transform .08s ease, background .15s ease, border-color .15s ease;
+      user-select:none;
+      cursor:pointer;
+    }
+    .btn:hover{transform:translateY(-1px); background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.16)}
+    .btn:active{transform:translateY(0px)}
+    .btn.primary{
+      border-color:rgba(246,195,74,.45);
+      background:rgba(246,195,74,.10);
+    }
+
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      margin-top:14px;
+    }
+    .card .inner{padding:16px}
+    .card h2{
+      font-size:14px;
+      margin:0 0 8px 0;
+      letter-spacing:.2px;
+      font-weight:680;
+    }
+    .card p{margin:0; color:var(--muted); font-size:13px; line-height:1.5}
+
+    .divider{height:1px;background:rgba(255,255,255,.08); margin:14px 0}
+
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:12px}
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--soft);
+      background:rgba(255,255,255,.03);
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    .dot{width:8px;height:8px;border-radius:99px;background:var(--gold)}
+    .dot.good{background:var(--good)}
+    .dot.warn{background:var(--warn)}
+
+    .form{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-top:12px;
+    }
+    @media (max-width: 860px){ .form{grid-template-columns:1fr;} }
+
+    label{display:block; font-size:12px; color:var(--faint); margin:2px 0 6px}
+    input, select, textarea{
+      width:100%;
+      padding:12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.25);
+      color:var(--text);
+      outline:none;
+      font-size:14px;
+    }
+    textarea{min-height:110px; resize:vertical}
+    input::placeholder, textarea::placeholder{color:rgba(255,255,255,.35)}
+
+    .hint{font-size:12px; color:var(--muted); line-height:1.5}
+    .mono{font-family:var(--mono)}
+    .small{font-size:12px; color:rgba(255,255,255,.50)}
+
+    .codebox{
+      background:rgba(0,0,0,.25);
+      border:1px solid var(--soft);
+      border-radius:16px;
+      padding:14px;
+      margin-top:12px;
+      overflow:auto;
+      font-family:var(--mono);
+      font-size:12px;
+      color:rgba(255,255,255,.82);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <div class="topbar">
+      <a class="brand" href="./">
+        <div class="mark" aria-hidden="true"></div>
+        <div>
+          <h1>TruthVerify <span class="sub">Get Verified</span></h1>
+        </div>
+      </a>
+
+      <div class="actions">
+        <a class="btn" href="./">Back to /v/</a>
+        <a class="btn" href="./example/">View Example</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="inner">
+        <h2>Request a verification (MVP)</h2>
+        <p>
+          Submit your handle + link. TruthVerify publishes a clear scope, evidence references, and a tamper-evident record ID.
+          <b>No enforcement claims.</b> It’s a trust signal, not a verdict.
+        </p>
+
+        <div class="row">
+          <span class="pill"><span class="dot good"></span>Output: public /v record</span>
+          <span class="pill"><span class="dot warn"></span>Scope: limited + explicit</span>
+          <span class="pill"><span class="dot"></span>Review: human-led, AI-assisted</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- MVP form (static). Later you can wire to Google Forms / Firebase / Stripe. -->
+        <form id="tvForm">
+          <div class="form">
+            <div>
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" placeholder="you@email.com" required />
+            </div>
+
+            <div>
+              <label for="platform">Platform</label>
+              <select id="platform" name="platform" required>
+                <option value="">Select…</option>
+                <option value="tiktok">TikTok</option>
+                <option value="instagram">Instagram</option>
+                <option value="youtube">YouTube</option>
+                <option value="x">X</option>
+                <option value="web">Web</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="handle">Handle</label>
+              <input id="handle" name="handle" type="text" placeholder="@creator" required />
+            </div>
+
+            <div>
+              <label for="link">Link to content (or profile)</label>
+              <input id="link" name="link" type="url" placeholder="https://…" required />
+            </div>
+
+            <div style="grid-column:1 / -1">
+              <label for="notes">Notes (optional)</label>
+              <textarea id="notes" name="notes" placeholder="What should be checked? What’s the claim? Any context?"></textarea>
+              <div class="hint" style="margin-top:8px">
+                Tip: keep notes simple — “Identity match + source trace” is a great MVP scope.
+              </div>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:14px">
+            <button class="btn primary" type="submit">Submit request</button>
+            <button class="btn" type="button" id="copySummary">Copy summary</button>
+          </div>
+
+          <div class="small" style="margin-top:10px">
+            This is a static MVP page. Submitting will generate a copyable request summary (no data is sent yet).
+          </div>
+        </form>
+
+        <div class="divider"></div>
+
+        <h2>What happens next</h2>
+        <div class="codebox">
+          1) You submit handle + link<br/>
+          2) TruthVerify produces a scoped verification plan<br/>
+          3) Evidence references + timestamps are recorded<br/>
+          4) A public /v record is issued with a shareable URL<br/>
+          5) Record can be updated or revoked with audit trail
+        </div>
+
+      </div>
+    </div>
+
+    <div class="small" style="margin-top:14px">
+      © <span id="year"></span> TruthVerify • MVP request page
+    </div>
+
+  </div>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    function buildSummary(){
+      const email = document.getElementById("email").value.trim();
+      const platform = document.getElementById("platform").value.trim();
+      const handle = document.getElementById("handle").value.trim();
+      const link = document.getElementById("link").value.trim();
+      const notes = document.getElementById("notes").value.trim();
+
+      return [
+        "TruthVerify — Verification Request (MVP)",
+        `Email: ${email || "—"}`,
+        `Platform: ${platform || "—"}`,
+        `Handle: ${handle || "—"}`,
+        `Link: ${link || "—"}`,
+        `Notes: ${notes || "—"}`
+      ].join("\n");
+    }
+
+    async function copyText(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        return true;
+      }catch(e){
+        return false;
+      }
+    }
+
+    document.getElementById("copySummary").addEventListener("click", async () => {
+      const ok = await copyText(buildSummary());
+      alert(ok ? "Copied request summary." : "Copy failed. Please copy manually.");
+    });
+
+    document.getElementById("tvForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const ok = await copyText(buildSummary());
+      alert(ok
+        ? "Copied. Now paste this into your workflow (email/Notion/DM)."
+        : "Copy failed. Please copy manually."
+      );
+    });
+  </script>
+</body>
+</html>
