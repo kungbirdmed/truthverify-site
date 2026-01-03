@@ -106,6 +106,7 @@
       color:var(--text);
       transition:transform .08s ease, background .15s ease, border-color .15s ease;
       user-select:none;
+      cursor:pointer;
     }
     .btn:hover{transform:translateY(-1px); background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.16)}
     .btn:active{transform:translateY(0px)}
@@ -271,6 +272,149 @@
       margin-bottom:12px;
     }
     .exampleBanner strong{font-weight:760}
+
+    /* =========================
+       PHASE 2: Sandbox section
+       ========================= */
+    .sandboxHeader{
+      margin-top:14px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .sandboxHeader .title{
+      font-size:14px;
+      font-weight:760;
+      letter-spacing:.2px;
+      margin:0;
+    }
+    .sandboxHeader .desc{
+      margin-top:6px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.5;
+      max-width:80ch;
+    }
+
+    .scopeBox{
+      margin-top:12px;
+      border:1px solid rgba(246,195,74,.28);
+      background:rgba(246,195,74,.06);
+      border-radius:16px;
+      padding:14px;
+    }
+    .scopeBox .cap{
+      font-size:12px;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.78);
+      font-weight:760;
+    }
+    .scopeBox .txt{
+      margin-top:8px;
+      color:rgba(255,255,255,.86);
+      font-size:13px;
+      line-height:1.5;
+    }
+
+    .steps{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top:12px;
+    }
+    .step{
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);
+      border-radius:16px;
+      padding:12px;
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+    }
+    .stepIcon{
+      width:30px;height:30px;border-radius:12px;
+      display:grid;place-items:center;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.18);
+      flex:0 0 auto;
+      font-size:14px;
+    }
+    .stepIcon.ok{border-color:rgba(57,217,138,.35); background:rgba(57,217,138,.08)}
+    .stepIcon.warn{border-color:rgba(255,209,102,.35); background:rgba(255,209,102,.08)}
+    .stepTitleRow{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .stepTitleRow b{color:rgba(255,255,255,.93)}
+    .stepTag{
+      font-size:12px;
+      color:rgba(255,255,255,.70);
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.02);
+      padding:4px 8px;
+      border-radius:999px;
+      white-space:nowrap;
+    }
+    .stepNote{
+      margin-top:4px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.45;
+    }
+
+    .outcomeBadge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(246,195,74,.28);
+      background:rgba(246,195,74,.06);
+      width:fit-content;
+      margin-top:10px;
+    }
+    .outcomeMeta{
+      margin-top:8px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.5;
+    }
+    .trustSignal{
+      margin-top:12px;
+      border:1px solid rgba(246,195,74,.28);
+      background:rgba(246,195,74,.06);
+      border-radius:16px;
+      padding:14px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .trustSignal b{color:#fff}
+    .trustSignal .hint{
+      color:rgba(255,255,255,.52);
+      font-size:12px;
+      border:1px dashed rgba(255,255,255,.18);
+      padding:8px 10px;
+      border-radius:12px;
+      background:rgba(255,255,255,.02);
+    }
+    .sandboxDisclaimer{
+      margin-top:12px;
+      color:rgba(255,255,255,.70);
+      font-size:12px;
+      line-height:1.5;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:18px;
+      background:rgba(255,255,255,.03);
+      padding:14px 16px;
+    }
   </style>
 </head>
 
@@ -287,6 +431,8 @@
 
       <div class="actions">
         <a class="btn" href="/truthverify-site/v/">Back to /v/</a>
+        <!-- NEW: jump to sandbox -->
+        <a class="btn" href="#sandbox">View Sandbox Method</a>
         <a class="btn primary" href="/truthverify-site/subscribe.html">Get Verified</a>
       </div>
     </div>
@@ -417,6 +563,146 @@
             what was verified, how, and what still isn’t known.
           </p>
         </div>
+      </div>
+    </section>
+
+    <!-- ======================================================
+         PHASE 2: VERIFICATION SANDBOX (Methodology Demo)
+         ====================================================== -->
+    <section class="card" id="sandbox" style="margin-top:14px;">
+      <div class="inner">
+
+        <div class="sandboxHeader">
+          <div>
+            <h2 class="title" style="margin:0;">Verification Sandbox — Methodology (Example)</h2>
+            <div class="desc">
+              This section demonstrates the verification workflow and decision logic behind a trust signal.
+              It is designed to be safe for public viewing: transparent process, clear scope, and no enforcement claims.
+            </div>
+            <div class="row" style="margin-top:10px;">
+              <span class="pill"><span class="dot"></span>Mode: Example</span>
+              <span class="pill"><span class="dot good"></span>Focus: Process transparency</span>
+              <span class="pill"><span class="dot warn"></span>Outputs: Contextual, not absolute</span>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:0;">
+            <a class="btn" href="#top" style="display:none;">Top</a>
+          </div>
+        </div>
+
+        <div class="scopeBox" role="note" aria-label="Verification Scope">
+          <div class="cap">Verification Scope</div>
+          <div class="txt">
+            This review evaluates content context, sourcing signals, and consistency indicators.
+            <b>It does not determine absolute truth, intent, or legal responsibility.</b>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 style="margin:0 0 6px 0;">Verification Process</h2>
+        <p style="margin:0;">Each step is shown with completion state and concise notes.</p>
+
+        <div class="steps" aria-label="Verification steps">
+
+          <div class="step">
+            <div class="stepIcon ok" title="Completed">✅</div>
+            <div style="flex:1;">
+              <div class="stepTitleRow">
+                <b>1. Source Identification</b>
+                <span class="stepTag">Completed</span>
+              </div>
+              <div class="stepNote">Source origin and publisher identified.</div>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="stepIcon ok" title="Completed">✅</div>
+            <div style="flex:1;">
+              <div class="stepTitleRow">
+                <b>2. Content Classification</b>
+                <span class="stepTag">Completed</span>
+              </div>
+              <div class="stepNote">Informational content with opinionated framing.</div>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="stepIcon warn" title="Context required">⚠️</div>
+            <div style="flex:1;">
+              <div class="stepTitleRow">
+                <b>3. Context &amp; Corroboration Check</b>
+                <span class="stepTag">Context required</span>
+              </div>
+              <div class="stepNote">Multiple interpretations observed across sources.</div>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="stepIcon ok" title="Completed">✅</div>
+            <div style="flex:1;">
+              <div class="stepTitleRow">
+                <b>4. Signal Consistency Review</b>
+                <span class="stepTag">Completed</span>
+              </div>
+              <div class="stepNote">No clear manipulation signals detected.</div>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="stepIcon warn" title="Partial">⚠️</div>
+            <div style="flex:1;">
+              <div class="stepTitleRow">
+                <b>5. Confidence Assessment</b>
+                <span class="stepTag">Partial</span>
+              </div>
+              <div class="stepNote">Evidence supports some claims; gaps remain.</div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 style="margin:0 0 6px 0;">Verification Outcome</h2>
+        <div class="outcomeBadge" role="status" aria-label="Outcome: Mixed / Context Required">
+          <span>🟡</span>
+          <b>Mixed / Context Required</b>
+        </div>
+        <div class="outcomeMeta">
+          <b style="color:rgba(255,255,255,.88)">Confidence:</b> Medium<br/>
+          <b style="color:rgba(255,255,255,.88)">Summary:</b>
+          Available evidence supports portions of the content, but additional context is required to reach a higher confidence classification.
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 style="margin:0 0 6px 0;">Evidence Trail</h2>
+        <div class="kv">
+          <div class="k">Review date</div><div class="v">2025-MM-DD</div>
+          <div class="k">Steps performed</div><div class="v">5</div>
+          <div class="k">Reviewer type</div><div class="v">Human-led, AI-assisted</div>
+          <div class="k">Reference materials</div><div class="v">Public sources</div>
+          <div class="k">Notes</div><div class="v">Contextual ambiguity documented.</div>
+        </div>
+
+        <div class="trustSignal" aria-label="Trust signal">
+          <div>
+            <b>Reviewed via TruthVerify Sandbox</b><br/>
+            <span class="small" style="display:inline-block;margin-top:4px;">
+              Indicates a verification review was performed. Does not imply endorsement, enforcement, or regulatory determination.
+            </span>
+          </div>
+          <div class="hint" title="Tooltip">Trust signal ≠ verdict</div>
+        </div>
+
+        <div class="sandboxDisclaimer" role="note">
+          <b>Sandbox demonstration.</b><br/>
+          Results illustrate verification methodology and decision logic.
+          They do not represent definitive truth judgments or regulatory determinations.
+        </div>
+
       </div>
     </section>
 
