@@ -1,626 +1,513 @@
-<!-- /v/index.html — TruthVerify /v Dashboard (GitHub Pages friendly) -->
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="color-scheme" content="dark" />
-  <title>TruthVerify /v — Verification Dashboard</title>
-  <meta name="description" content="TruthVerify public verification dashboard. Search, filter, and verify creator badges and checks." />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TruthVerify — Get Verified</title>
+  <meta name="description" content="Request a TruthVerify verification record. Minimal, calm, and investor-safe." />
+  <meta name="theme-color" content="#0b0f1a" />
 
   <style>
     :root{
-      --bg:#07080b;
-      --panel:#0d1016;
+      --bg:#070a12;
+      --panel:#0b1020;
+      --panel2:#0a0f1c;
       --border:rgba(255,255,255,.10);
+      --soft:rgba(255,255,255,.06);
       --text:rgba(255,255,255,.90);
-      --muted:rgba(255,255,255,.62);
-      --muted2:rgba(255,255,255,.42);
-      --gold:#d7b85a;
-      --good:#58d08a;
-      --warn:#f7c35f;
-      --bad:#ff6b6b;
-      --shadow: 0 10px 30px rgba(0,0,0,.45);
-      --radius: 16px;
-      --max: 1080px;
+      --muted:rgba(255,255,255,.66);
+      --faint:rgba(255,255,255,.46);
+      --gold:#f6c34a;
+      --gold2:#ffdc7a;
+      --good:#39d98a;
+      --warn:#ffd166;
+      --bad:#ff5c5c;
+
+      --radius:18px;
+      --shadow: 0 18px 50px rgba(0,0,0,.55);
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
     }
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+
+    /* ✅ iOS/mobile stabilizers */
+    html{-webkit-text-size-adjust:100%}
+    body{min-height:100vh; overflow-x:hidden}
+
     body{
       margin:0;
       font-family:var(--sans);
-      background:
-        radial-gradient(1200px 700px at 20% -10%, rgba(215,184,90,.10), transparent 60%),
-        radial-gradient(900px 600px at 80% 0%, rgba(255,255,255,.06), transparent 55%),
-        radial-gradient(900px 600px at 40% 110%, rgba(215,184,90,.08), transparent 55%),
-        var(--bg);
       color:var(--text);
-      letter-spacing:.2px;
+      background:
+        radial-gradient(1000px 600px at 25% 0%, rgba(246,195,74,.16), transparent 60%),
+        radial-gradient(900px 700px at 80% 10%, rgba(104,182,255,.10), transparent 55%),
+        radial-gradient(900px 700px at 50% 120%, rgba(255,255,255,.06), transparent 60%),
+        var(--bg);
     }
-    a{ color:inherit; text-decoration:none; }
-    a:hover{ text-decoration:underline; }
 
-    .wrap{ max-width:var(--max); margin:0 auto; padding:28px 18px 64px; }
+    a{color:inherit}
+    .wrap{
+      max-width:980px;
+      margin:0 auto;
+      padding:28px 18px 56px;
+    }
 
     .topbar{
-      display:flex; align-items:flex-start; justify-content:space-between;
-      gap:16px; margin-bottom:18px;
-    }
-    .brand{ display:flex; gap:12px; align-items:center; }
-    .mark{
-      width:44px;height:44px;border-radius:12px;
-      background:
-        radial-gradient(18px 18px at 30% 30%, rgba(255,255,255,.20), transparent 60%),
-        radial-gradient(28px 28px at 70% 60%, rgba(215,184,90,.22), transparent 65%),
-        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
-      border:1px solid var(--border);
-      box-shadow: var(--shadow);
-      position:relative; overflow:hidden;
-    }
-    .mark:after{
-      content:"";
-      position:absolute; inset:-40% -30%;
-      background: linear-gradient(120deg, transparent 40%, rgba(215,184,90,.20), transparent 60%);
-      transform: rotate(10deg);
-      opacity:.9;
-    }
-    .titleblock h1{ margin:0; font-size:18px; line-height:1.2; font-weight:650; }
-    .titleblock p{ margin:6px 0 0; font-size:13px; color:var(--muted); max-width:64ch; }
-
-    .actions{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
-    .chip{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:9px 12px; border-radius:999px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      color:var(--muted);
-      font-size:12px;
-      cursor:pointer; user-select:none;
-    }
-    .chip strong{ color:var(--text); font-weight:600; }
-
-    .hero{
-      border:1px solid var(--border);
-      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border-radius: var(--radius);
-      padding:16px;
-      box-shadow: var(--shadow);
-      display:grid;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
       gap:12px;
       margin-bottom:18px;
     }
 
-    .controls{
-      display:flex; gap:10px; flex-wrap:wrap;
-      align-items:center; justify-content:space-between;
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      text-decoration:none;
     }
-
-    .search{ flex:1 1 320px; position:relative; }
-    .search input{
-      width:100%;
-      padding:12px 12px 12px 38px;
-      border-radius: 14px;
+    .mark{
+      width:38px;height:38px;border-radius:12px;
+      background:
+        radial-gradient(16px 16px at 30% 30%, rgba(255,220,122,.85), transparent 60%),
+        radial-gradient(22px 22px at 70% 70%, rgba(246,195,74,.50), transparent 60%),
+        linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.02));
       border:1px solid var(--border);
-      background: rgba(0,0,0,.25);
-      color:var(--text);
-      outline:none;
-      font-size:14px;
+      box-shadow:0 10px 26px rgba(0,0,0,.35);
     }
-    .search input::placeholder{ color:var(--muted2); }
-    .search .icon{
-      position:absolute; left:12px; top:50%;
-      transform:translateY(-50%);
-      opacity:.7; pointer-events:none;
-      font-size:14px;
+    .brand h1{
+      font-size:15px;
+      margin:0;
+      letter-spacing:.2px;
+      font-weight:650;
+    }
+    .brand .sub{
+      display:block;
+      margin-top:2px;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:500;
     }
 
-    .filters{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
-
-    .select{
-      padding:10px 12px;
-      border-radius: 14px;
-      border:1px solid var(--border);
-      background: rgba(0,0,0,.22);
-      color:var(--text);
-      outline:none;
-      font-size:13px;
-      cursor:pointer;
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
     }
 
     .btn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
       padding:10px 12px;
-      border-radius:14px;
+      border-radius:12px;
       border:1px solid var(--border);
-      background: rgba(255,255,255,.05);
-      color:var(--text);
+      background:rgba(255,255,255,.03);
+      text-decoration:none;
       font-size:13px;
+      color:var(--text);
+      transition:transform .08s ease, background .15s ease, border-color .15s ease;
+      user-select:none;
       cursor:pointer;
     }
-    .btn:hover{ background: rgba(255,255,255,.07); }
-    .btn.gold{
-      border-color: rgba(215,184,90,.35);
-      background: rgba(215,184,90,.10);
+    .btn:hover{transform:translateY(-1px); background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.16)}
+    .btn:active{transform:translateY(0px)}
+    .btn.primary{
+      border-color:rgba(246,195,74,.45);
+      background:rgba(246,195,74,.10);
     }
-    .btn.gold:hover{ background: rgba(215,184,90,.14); }
 
-    .metaRow{
-      display:flex; justify-content:space-between;
-      gap:12px; flex-wrap:wrap; align-items:center;
+    .hero{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:14px;
+      margin-top:10px;
+      margin-bottom:14px;
     }
-    .metaRow .small{ font-size:12px; color:var(--muted); }
-    .mono{ font-family:var(--mono); }
-
-    .grid{ display:grid; grid-template-columns: repeat(12, 1fr); gap:12px; }
+    @media (max-width: 860px){
+      .hero{grid-template-columns:1fr; }
+    }
 
     .card{
-      grid-column: span 12;
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
       border:1px solid var(--border);
-      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
-      border-radius: var(--radius);
-      padding:14px;
-      box-shadow: 0 8px 20px rgba(0,0,0,.38);
-      position:relative; overflow:hidden;
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
     }
-    @media (min-width: 820px){ .card{ grid-column: span 6; } }
-
-    .card:before{
-      content:"";
-      position:absolute; inset:-1px;
-      border-radius:inherit;
-      background: radial-gradient(500px 180px at 20% 0%, rgba(215,184,90,.10), transparent 60%);
-      pointer-events:none; opacity:.9;
+    .card .inner{padding:16px}
+    .card h2{
+      font-size:14px;
+      margin:0 0 8px 0;
+      letter-spacing:.2px;
+      font-weight:680;
     }
+    .card p{margin:0; color:var(--muted); font-size:13px; line-height:1.5}
 
-    .cardHeader{
-      display:flex; justify-content:space-between; align-items:flex-start;
-      gap:10px; margin-bottom:10px; position:relative;
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+      margin-top:14px;
     }
-
-    .badgeTitle{ display:flex; align-items:center; gap:10px; min-width:0; }
-    .avatar{
-      width:38px;height:38px;border-radius:12px;
-      border:1px solid var(--border);
-      background:
-        radial-gradient(18px 18px at 30% 25%, rgba(255,255,255,.18), transparent 60%),
-        radial-gradient(28px 28px at 70% 70%, rgba(215,184,90,.18), transparent 60%),
-        rgba(255,255,255,.03);
-      flex:0 0 auto;
+    @media (max-width: 860px){
+      .grid{grid-template-columns:1fr;}
     }
 
-    .who{ min-width:0; }
-    .who .name{
-      font-weight:650; font-size:14px;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
-    .who .handle{
-      margin-top:3px; font-size:12px; color:var(--muted);
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    /* iOS grid/overflow safety */
+    .card, .hero, .grid { min-width:0 }
+
+    .divider{height:1px;background:rgba(255,255,255,.08); margin:14px 0}
+    .small{font-size:12px;color:var(--muted)}
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-top:12px;
     }
 
-    .status{
-      display:inline-flex; align-items:center; gap:7px;
-      padding:7px 10px; border-radius:999px;
-      border:1px solid var(--border);
-      background: rgba(0,0,0,.18);
-      font-size:12px; color:var(--muted);
-      flex:0 0 auto;
-    }
-    .dot{ width:8px;height:8px;border-radius:999px; background: var(--warn);
-      box-shadow: 0 0 0 4px rgba(247,195,95,.12);
-    }
-    .status.good .dot{ background: var(--good); box-shadow: 0 0 0 4px rgba(88,208,138,.12); }
-    .status.bad  .dot{ background: var(--bad);  box-shadow: 0 0 0 4px rgba(255,107,107,.12); }
-    .status.good{ color: rgba(210,255,228,.88); border-color: rgba(88,208,138,.28); background: rgba(88,208,138,.08); }
-    .status.bad{ color: rgba(255,220,220,.88); border-color: rgba(255,107,107,.28); background: rgba(255,107,107,.08); }
-
-    .row{ display:flex; gap:10px; flex-wrap:wrap; position:relative; margin-bottom:10px; }
     .pill{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:7px 10px; border-radius:999px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      font-size:12px; color:var(--muted);
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--soft);
+      background:rgba(255,255,255,.03);
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
     }
-    .pill b{ color:var(--text); font-weight:600; }
+    .dot{width:8px;height:8px;border-radius:99px;background:var(--gold)}
+    .dot.good{background:var(--good)}
+    .dot.warn{background:var(--warn)}
+    .dot.bad{background:var(--bad)}
+
+    .notice{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,209,102,.28);
+      background:rgba(255,209,102,.07);
+      color:rgba(255,255,255,.86);
+      margin-bottom:12px;
+    }
+    .notice strong{font-weight:760}
 
     .kv{
       display:grid;
-      grid-template-columns: 110px 1fr;
-      gap:8px 10px;
-      padding:10px 12px;
-      border-radius: 14px;
-      background: rgba(0,0,0,.18);
-      border:1px solid rgba(255,255,255,.07);
-      position:relative;
+      grid-template-columns: 140px 1fr;
+      gap:10px 14px;
+      margin-top:12px;
     }
-    .k{ color:var(--muted2); font-size:12px; }
-    .v{ color:var(--text); font-size:12px; overflow-wrap:anywhere; }
+    .k{color:var(--faint); font-size:12px}
+    .v{color:var(--text); font-size:13px; word-break:break-word}
 
-    .cardFooter{
-      display:flex; justify-content:space-between; align-items:center;
-      gap:10px; flex-wrap:wrap; margin-top:12px; position:relative;
+    .codebox{
+      background:rgba(0,0,0,.25);
+      border:1px solid var(--soft);
+      border-radius:16px;
+      padding:14px;
+      margin-top:12px;
+      overflow:auto;
+      font-family:var(--mono);
+      font-size:12px;
+      color:rgba(255,255,255,.82);
     }
-    .link{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:9px 10px; border-radius: 12px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      font-size:12px; color:var(--text);
-      cursor:pointer;
-    }
-    .link:hover{ background: rgba(255,255,255,.06); }
+    .codebox b{color:rgba(255,255,255,.93)}
 
-    .hash{ font-family: var(--mono); color: rgba(215,184,90,.85); font-size:12px; }
-
-    .empty{
-      border:1px dashed rgba(255,255,255,.18);
-      border-radius: var(--radius);
-      padding:20px;
-      color:var(--muted);
-      background: rgba(0,0,0,.18);
-      text-align:center;
-      grid-column: span 12;
+    /* Form */
+    .form{
+      display:grid;
+      gap:10px;
+      margin-top:10px;
     }
+    label{
+      display:grid;
+      gap:6px;
+      font-size:12px;
+      color:rgba(255,255,255,.72);
+    }
+    input, select, textarea{
+      width:100%;
+      padding:11px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.18);
+      color:rgba(255,255,255,.90);
+      outline:none;
+      font-family:var(--sans);
+      font-size:14px;
+    }
+    textarea{min-height:96px; resize:vertical}
+    input::placeholder, textarea::placeholder{color:rgba(255,255,255,.38)}
+    input:focus, select:focus, textarea:focus{
+      border-color:rgba(246,195,74,.35);
+      box-shadow:0 0 0 3px rgba(246,195,74,.10);
+    }
+
+    .hintBox{
+      margin-top:10px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:18px;
+      background:rgba(255,255,255,.03);
+      padding:14px 16px;
+      color:rgba(255,255,255,.72);
+      font-size:12px;
+      line-height:1.55;
+    }
+    .hintBox b{color:#fff}
 
     .footer{
-      margin-top:20px;
-      color:var(--muted2);
+      margin-top:18px;
+      color:rgba(255,255,255,.50);
       font-size:12px;
       display:flex;
-      flex-wrap:wrap;
-      gap:10px;
       justify-content:space-between;
-      align-items:center;
-    }
-    .kbd{
-      font-family: var(--mono);
-      border:1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.25);
-      padding:2px 6px;
-      border-radius:8px;
-      color: rgba(255,255,255,.76);
+      gap:12px;
+      flex-wrap:wrap;
     }
   </style>
 </head>
 
 <body>
   <div class="wrap">
+
     <div class="topbar">
-      <div class="brand">
+      <a class="brand" href="/truthverify-site/v/">
         <div class="mark" aria-hidden="true"></div>
-        <div class="titleblock">
-          <h1>TruthVerify <span class="mono">/v</span> — Verification Dashboard</h1>
-          <p>
-            A calm, public trust-proof view. Search a creator or badge ID and confirm verification status.
-            No hype. Just records.
-          </p>
+        <div>
+          <h1>TruthVerify <span class="sub">Verification Request</span></h1>
         </div>
-      </div>
+      </a>
 
       <div class="actions">
-  <div class="chip" id="chipStatus"><strong id="statCount">0</strong> records loaded</div>
-  <div class="chip"><span class="kbd">/</span> search</div>
+        <a class="btn" href="/truthverify-site/v/">Back to /v/</a>
+        <a class="btn" href="/truthverify-site/v/example/">View Example</a>
+        <a class="btn primary" href="#request">Start Request</a>
+      </div>
+    </div>
 
-  <!-- NEW: Example + Sandbox Method -->
-  <a class="chip" href="./example/" title="See a demo verification record">Example</a>
-  <a class="chip" href="./example/#sandbox" title="See the Phase 2 sandbox methodology">Sandbox Method</a>
+    <div class="notice" role="note">
+      <div>
+        <strong>Get Verified (MVP)</strong> — This page collects the minimum info needed to start a verification record.
+        <div class="small" style="margin-top:6px;">No hype. Clear scope. You’ll copy a request summary into your workflow.</div>
+      </div>
+      <div class="small">Calm • Neutral</div>
+    </div>
 
-  <a class="chip" href="../" title="Back to home">Home</a>
-</div>
+    <section class="hero" id="request">
+      <div class="card">
+        <div class="inner">
+          <h2>Request a verification</h2>
+          <p>
+            Fill this in, then tap <b>Copy request summary</b>. Paste it into your DM/email/workflow.
+            (This MVP page doesn’t submit data to a server yet.)
+          </p>
 
-    <section class="hero" aria-label="Controls">
-      <div class="controls">
-        <div class="search">
-          <div class="icon">⌕</div>
-          <input id="q" type="search" placeholder="Search by creator, handle, badge ID, platform, or note…" autocomplete="off" />
-        </div>
+          <div class="divider"></div>
 
-        <div class="filters">
-          <select id="platform" class="select" aria-label="Platform filter">
-            <option value="">All platforms</option>
-            <option value="tiktok">TikTok</option>
-            <option value="instagram">Instagram</option>
-            <option value="youtube">YouTube</option>
-            <option value="x">X</option>
-            <option value="web">Web</option>
-          </select>
+          <form class="form" id="tvForm">
+            <label>
+              Email (optional)
+              <input id="email" type="email" placeholder="you@email.com" autocomplete="email" />
+            </label>
 
-          <select id="status" class="select" aria-label="Status filter">
-            <option value="">All statuses</option>
-            <option value="verified">Verified</option>
-            <option value="pending">Pending</option>
-            <option value="revoked">Revoked</option>
-          </select>
+            <label>
+              Platform
+              <select id="platform">
+                <option value="">Select…</option>
+                <option>TikTok</option>
+                <option>Instagram</option>
+                <option>YouTube</option>
+                <option>X (Twitter)</option>
+                <option>Facebook</option>
+                <option>Website / Blog</option>
+                <option>Other</option>
+              </select>
+            </label>
 
-          <select id="sort" class="select" aria-label="Sort">
-            <option value="newest">Sort: Newest</option>
-            <option value="oldest">Sort: Oldest</option>
-            <option value="creator">Sort: Creator A→Z</option>
-          </select>
+            <label>
+              Creator handle / name
+              <input id="handle" type="text" placeholder="@creator (or public name)" />
+            </label>
 
-          <button class="btn" id="reset" type="button">Reset</button>
-          <button class="btn gold" id="copyLink" type="button">Copy filtered link</button>
+            <label>
+              Link to content (required)
+              <input id="link" type="url" placeholder="https://…" required />
+            </label>
+
+            <label>
+              What should be verified? (notes)
+              <textarea id="notes" placeholder="Ex: ‘Is this the original upload?’ ‘Does this account belong to the creator?’ ‘Is the linked source real and matching?’"></textarea>
+            </label>
+
+            <div class="row" style="margin-top:6px;">
+              <button class="btn primary" id="copySummary" type="button">Copy request summary</button>
+              <button class="btn" id="resetBtn" type="button">Reset</button>
+            </div>
+
+            <div class="codebox" id="previewBox" aria-label="Request summary preview">
+              <b>Preview (what you’ll copy)</b><br/><br/>
+              <span id="previewText" style="white-space:pre-wrap;"></span>
+            </div>
+
+            <div class="hintBox">
+              <b>Scope reminder:</b> TruthVerify is a trust layer, not a courtroom. It documents what was checked,
+              what evidence exists, and what remains unknown.
+              <div style="margin-top:8px;">
+                <span class="pill"><span class="dot good"></span>Human-led</span>
+                <span class="pill"><span class="dot"></span>AI-assisted</span>
+                <span class="pill"><span class="dot warn"></span>Contextual</span>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
 
-      <div class="metaRow">
-        <div class="small" id="hint">
-          Tip: paste a badge ID like <span class="mono">TV-2025-0001</span> or a handle like <span class="mono">@creator</span>.
-        </div>
-        <div class="small">
-          Data source: <span class="mono">/v/data.json</span>
+      <div class="card">
+        <div class="inner">
+          <h2>What happens next</h2>
+          <p>A simple, public record is created (when production is live) with a tamper-evident ID and a shareable page.</p>
+
+          <div class="divider"></div>
+
+          <div class="kv">
+            <div class="k">Step 1</div><div class="v">You submit a request (link + handle + what to verify).</div>
+            <div class="k">Step 2</div><div class="v">We capture evidence artifacts (source snapshot, metadata, hashes).</div>
+            <div class="k">Step 3</div><div class="v">We publish a record page: status + confidence + limitations.</div>
+            <div class="k">Step 4</div><div class="v">You share the record URL (bio, decks, or comments).</div>
+          </div>
+
+          <div class="divider"></div>
+
+          <h2>Common request types</h2>
+          <p class="small">Pick one (or combine):</p>
+          <div class="row" style="margin-top:10px;">
+            <span class="pill"><span class="dot"></span>Account control proof</span>
+            <span class="pill"><span class="dot"></span>Original upload trace</span>
+            <span class="pill"><span class="dot"></span>Source link verification</span>
+            <span class="pill"><span class="dot warn"></span>Context required flags</span>
+          </div>
         </div>
       </div>
     </section>
 
-    <main class="grid" id="grid" aria-label="Results"></main>
+    <section class="grid">
+      <div class="card">
+        <div class="inner">
+          <h2>Investor-safe language</h2>
+          <p>
+            TruthVerify does not claim absolute truth. It provides a transparent record of checks performed,
+            evidence referenced, and known limitations.
+          </p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="inner">
+          <h2>Need the demo UX?</h2>
+          <p>Use the example record for decks and TikTok.</p>
+          <div class="row">
+            <a class="btn primary" href="/truthverify-site/v/example/">Open example record</a>
+            <a class="btn" href="/truthverify-site/v/">Back to dashboard</a>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <div class="footer">
-      <div>© <span id="year"></span> TruthVerify — integrity-first verification</div>
-      <div class="mono">v1 • static GitHub Pages friendly</div>
+      <div>© <span id="year"></span> TruthVerify • Get Verified</div>
+      <div class="small">MVP page — copy/paste workflow</div>
     </div>
+
   </div>
 
   <script>
-    const DATA_URL = "./data.json";
+    // Year
+    document.getElementById("year").textContent = new Date().getFullYear();
 
-    // If data.json is missing, we show a tiny fallback so you never see a blank page.
-    const FALLBACK = [
-      {
-        id: "TV-EXAMPLE-0001",
-        creator_name: "Example Creator",
-        handle: "@example",
-        platform: "tiktok",
-        status: "verified",
-        issued_at: "2025-12-20T18:20:00Z",
-        expires_at: "2026-12-20T18:20:00Z",
-        verified_url: "./verify.html?id=TV-EXAMPLE-0001",
-        notes: "Demo record. Add real records in /v/data.json.",
-        hash: "demo"
-      }
-    ];
+    // Elements
+    const email = document.getElementById("email");
+    const platform = document.getElementById("platform");
+    const handle = document.getElementById("handle");
+    const link = document.getElementById("link");
+    const notes = document.getElementById("notes");
 
-    const $ = (sel) => document.querySelector(sel);
+    const previewText = document.getElementById("previewText");
+    const copyBtn = document.getElementById("copySummary");
+    const resetBtn = document.getElementById("resetBtn");
 
-    function safeLower(x){ return (x ?? "").toString().toLowerCase(); }
-    function normalizePlatform(p){
-      const v = safeLower(p).trim();
-      if(v === "twitter") return "x";
-      return v;
+    function buildSummary(){
+      const e = (email.value || "—").trim();
+      const p = (platform.value || "—").trim();
+      const h = (handle.value || "—").trim();
+      const l = (link.value || "—").trim();
+      const n = (notes.value || "—").trim();
+
+      return [
+        "TruthVerify — Verification Request (MVP)",
+        `Email: ${e}`,
+        `Platform: ${p}`,
+        `Handle: ${h}`,
+        `Link: ${l}`,
+        `Notes: ${n}`,
+      ].join("\n");
     }
 
-    function formatDate(iso){
-      if(!iso) return "—";
-      const d = new Date(iso);
-      if(Number.isNaN(d.getTime())) return iso;
-      return d.toLocaleString(undefined, {
-        year:"numeric", month:"short", day:"2-digit",
-        hour:"2-digit", minute:"2-digit"
-      });
-    }
-
-    function statusLabel(s){
-      const v = safeLower(s);
-      if(v === "verified") return "Verified";
-      if(v === "pending") return "Pending";
-      if(v === "revoked") return "Revoked";
-      return "Unknown";
-    }
-    function statusClass(s){
-      const v = safeLower(s);
-      if(v === "verified") return "good";
-      if(v === "revoked") return "bad";
-      return "";
-    }
-    function platformLabel(p){
-      const v = normalizePlatform(p);
-      if(v === "tiktok") return "TikTok";
-      if(v === "instagram") return "Instagram";
-      if(v === "youtube") return "YouTube";
-      if(v === "x") return "X";
-      if(v === "web") return "Web";
-      return (p || "—");
-    }
-
-    function escapeHtml(str){
-      return (str ?? "").toString()
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
-
-    function buildQueryFromState(){
-      const params = new URLSearchParams();
-      const q = $("#q").value.trim();
-      const platform = $("#platform").value;
-      const status = $("#status").value;
-      const sort = $("#sort").value;
-      if(q) params.set("q", q);
-      if(platform) params.set("platform", platform);
-      if(status) params.set("status", status);
-      if(sort && sort !== "newest") params.set("sort", sort);
-      const s = params.toString();
-      return s ? `?${s}` : "";
-    }
-
-    function applyStateFromQuery(){
-      const params = new URLSearchParams(location.search);
-      $("#q").value = params.get("q") || "";
-      $("#platform").value = params.get("platform") || "";
-      $("#status").value = params.get("status") || "";
-      $("#sort").value = params.get("sort") || "newest";
-    }
-
-    function setURLFromState(){
-      const qs = buildQueryFromState();
-      history.replaceState(null, "", `${location.pathname}${qs}`);
-    }
-
-    async function loadData(){
-      try{
-        const res = await fetch(DATA_URL, { cache: "no-store" });
-        if(!res.ok) throw new Error("no data.json");
-        const json = await res.json();
-        const arr = Array.isArray(json) ? json : (json.records || []);
-        return arr.map(r => ({
-          ...r,
-          platform: normalizePlatform(r.platform),
-          status: safeLower(r.status)
-        }));
-      }catch(e){
-        return FALLBACK.map(r => ({
-          ...r,
-          platform: normalizePlatform(r.platform),
-          status: safeLower(r.status)
-        }));
-      }
-    }
-
-    function cardTemplate(r){
-      const status = statusLabel(r.status);
-      const sClass = statusClass(r.status);
-      const plat = platformLabel(r.platform);
-      const issued = formatDate(r.issued_at);
-      const exp = r.expires_at ? formatDate(r.expires_at) : "—";
-      const url = `./verify.html?id=${encodeURIComponent(r.id)}`;
-      const hash = r.hash || "—";
-
-      return `
-        <article class="card">
-          <div class="cardHeader">
-            <div class="badgeTitle">
-              <div class="avatar" aria-hidden="true"></div>
-              <div class="who">
-                <div class="name" title="${escapeHtml(r.creator_name || "")}">${escapeHtml(r.creator_name || "—")}</div>
-                <div class="handle">${escapeHtml(r.handle || "")}</div>
-              </div>
-            </div>
-
-            <div class="status ${sClass}">
-              <span class="dot" aria-hidden="true"></span>
-              <span>${status}</span>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="pill"><b>Badge</b> <span class="mono">${escapeHtml(r.id || "")}</span></div>
-            <div class="pill"><b>Platform</b> ${escapeHtml(plat)}</div>
-          </div>
-
-          <div class="kv">
-            <div class="k">Issued</div><div class="v">${escapeHtml(issued)}</div>
-            <div class="k">Expires</div><div class="v">${escapeHtml(exp)}</div>
-            <div class="k">Notes</div><div class="v">${escapeHtml(r.notes || "—")}</div>
-          </div>
-
-          <div class="cardFooter">
-            <a class="link" href="${escapeHtml(url)}" target="_blank" rel="noopener">
-              Open verification page →
-            </a>
-            <div class="hash" title="Record hash / checksum">${escapeHtml(hash)}</div>
-          </div>
-        </article>
-      `;
-    }
-
-    function filterAndSort(all){
-      const q = safeLower($("#q").value.trim());
-      const platform = $("#platform").value;
-      const status = $("#status").value;
-      const sort = $("#sort").value;
-
-      let arr = all.slice();
-
-      if(platform){
-        arr = arr.filter(r => normalizePlatform(r.platform) === platform);
-      }
-      if(status){
-        arr = arr.filter(r => safeLower(r.status) === status);
-      }
-      if(q){
-        arr = arr.filter(r => {
-          const hay = [r.id, r.creator_name, r.handle, r.platform, r.status, r.notes, r.hash]
-            .map(safeLower).join(" ");
-          return hay.includes(q);
-        });
-      }
-
-      if(sort === "creator"){
-        arr.sort((a,b) => safeLower(a.creator_name).localeCompare(safeLower(b.creator_name)));
-      }else if(sort === "oldest"){
-        arr.sort((a,b) => new Date(a.issued_at || 0) - new Date(b.issued_at || 0));
-      }else{
-        arr.sort((a,b) => new Date(b.issued_at || 0) - new Date(a.issued_at || 0));
-      }
-
-      return arr;
-    }
-
-    function render(records){
-      const grid = $("#grid");
-      if(!records.length){
-        grid.innerHTML = `<div class="empty">No matches. Try clearing filters or searching a shorter term.</div>`;
-        return;
-      }
-      grid.innerHTML = records.map(cardTemplate).join("");
+    function refreshPreview(){
+      previewText.textContent = buildSummary();
     }
 
     async function copyText(text){
       try{
         await navigator.clipboard.writeText(text);
-        const hint = $("#hint");
-        const old = hint.innerHTML;
-        hint.textContent = "Copied filtered link.";
-        setTimeout(() => { hint.innerHTML = old; }, 1500);
+        return true;
       }catch(e){
-        alert("Clipboard blocked by browser. Copy manually from address bar.");
+        return false;
       }
     }
 
-    (async function init(){
-      $("#year").textContent = String(new Date().getFullYear());
+    // Live preview
+    [email, platform, handle, link, notes].forEach(el => {
+      el.addEventListener("input", refreshPreview);
+      el.addEventListener("change", refreshPreview);
+    });
+    refreshPreview();
 
-      applyStateFromQuery();
-      const all = await loadData();
-      $("#statCount").textContent = String(all.length);
+    // Copy
+    copyBtn.addEventListener("click", async () => {
+      const text = buildSummary();
 
-      function refresh(){
-        setURLFromState();
-        render(filterAndSort(all));
+      // Basic validation: link recommended
+      if(!link.value.trim()){
+        copyBtn.textContent = "Add link first";
+        setTimeout(()=> copyBtn.textContent = "Copy request summary", 1200);
+        link.focus();
+        return;
       }
 
-      $("#q").addEventListener("input", refresh);
-      $("#platform").addEventListener("change", refresh);
-      $("#status").addEventListener("change", refresh);
-      $("#sort").addEventListener("change", refresh);
+      const ok = await copyText(text);
+      copyBtn.textContent = ok ? "Copied" : "Copy failed";
+      setTimeout(()=> copyBtn.textContent = "Copy request summary", 1400);
+    });
 
-      $("#reset").addEventListener("click", () => {
-        $("#q").value = "";
-        $("#platform").value = "";
-        $("#status").value = "";
-        $("#sort").value = "newest";
-        refresh();
-      });
-
-      $("#copyLink").addEventListener("click", () => {
-        const link = `${location.origin}${location.pathname}${buildQueryFromState()}`;
-        copyText(link);
-      });
-
-      // "/" focuses search (nice on desktop)
-      window.addEventListener("keydown", (e) => {
-        if(e.key === "/" && document.activeElement !== $("#q")){
-          e.preventDefault();
-          $("#q").focus();
-        }
-      });
-
-      refresh();
-    })();
+    // Reset
+    resetBtn.addEventListener("click", () => {
+      email.value = "";
+      platform.value = "";
+      handle.value = "";
+      link.value = "";
+      notes.value = "";
+      refreshPreview();
+    });
   </script>
 </body>
 </html>
