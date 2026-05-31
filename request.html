@@ -269,12 +269,29 @@ const supabase = window.supabase.createClient(
         verifiedAt: null
       };
 
-      try{
-        const key = "tv_requests";
-        const arr = JSON.parse(localStorage.getItem(key) || "[]");
-        arr.unshift(record);
-        localStorage.setItem(key, JSON.stringify(arr));
-      }catch(_){}
+    try{
+  const { error } = await supabase
+    .from('cases')
+    .insert([
+      {
+        request_id: id,
+        claim_text: record.notes || 'Verification Request',
+        source_url: record.profile_url,
+        status: 'Submitted',
+        verdict: 'Pending',
+        confidence_level: 'Low'
+      }
+    ]);
+
+  if (error) throw error;
+}catch(err){
+  console.error("Supabase save failed:", err);
+
+  const key = "tv_requests";
+  const arr = JSON.parse(localStorage.getItem(key) || "[]");
+  arr.unshift(record);
+  localStorage.setItem(key, JSON.stringify(arr));
+}
 
       const summary = [
         `TruthVerify — Verification Request`,
