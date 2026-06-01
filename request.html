@@ -162,7 +162,8 @@
           <textarea id="notes" placeholder="Anything we should know?"></textarea>
 
           <div class="actionsRow">
-            <button type="submit" class="btn primary">Start verification steps →</button>
+            <button type="submit" class=<button type="button" class="btn primary" id="startBtn">Start verification steps →</button>
+               </button>
             <button type="button" class="btn" id="copyBtn" style="display:none;">Copy submission summary</button>
           </div>
 
@@ -245,9 +246,8 @@
     const reqIdEl = document.getElementById('reqId');
     const copyBtn = document.getElementById('copyBtn');
 
-    form.addEventListener('submit', async (e)=>{
-      e.preventDefault();
-      alert("HELLO FROM TRUTHVERIFY");
+    document.getElementById('startBtn').addEventListener('click', async ()=>{
+    alert("HELLO FROM TRUTHVERIFY");
 
       const id = makeId();
       reqIdEl.textContent = id;
